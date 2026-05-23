@@ -1,8 +1,11 @@
 import "./../styles/login.css";
 import { A } from "@solidjs/router";
 import logo from "../assets/logo.png";
+import { users, setUsers } from "./userStore";
 
 function Login() {
+
+  console.log(users())
   return (
     <div class="page">
       <div class="login-card">
