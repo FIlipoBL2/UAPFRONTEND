@@ -15,9 +15,8 @@ function NewReleases() {
 
   return (
     <section style={{ "margin-bottom": "60px" }}>
-      <div style={{ display: "flex", "justify-content": "space-between", "align-items": "baseline", "margin-bottom": "20px" }}>
+      <div style={{ display: "flex", "align-items": "baseline", "margin-bottom": "20px" }}>
         <h3 style={{ margin: 0, "font-size": "24px" }}>NEW RELEASES</h3>
-        <a href="#" style={{ color: "#00ff00", "text-decoration": "none" }}>See All</a>
       </div>
 
       <figure style={{ display: "flex", "align-items": "center", gap: "15px", margin: 0 }}>
