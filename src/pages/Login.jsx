@@ -1,22 +1,30 @@
 import "./../styles/login.css";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
 import { users } from "./userStore";
+import {createSignal } from "solid-js"
 
 function Login() {
 
-  const [email, setEmail] = createSignal("")
-  const [password, setPassword] = createSignal("")
-  
+  const [email, setEmail] = createSignal("");
+  const [password, setPassword] = createSignal("");
+  const navigate = useNavigate();
   function handleLogin(){
     //cek apakah email ada di users
     let isLoginSuccess = false;
 
+    //looping untuk semua isi array users cari username dan password yang sesuai
     for(let i=0; i<users().length; i++){
       if(users()[i].email == email() && users()[i].password == password()){
         isLoginSuccess = true;
         break;
       }
+    }
+    
+    // kalau username dan pasword match maka kita redirect ke halaman home dimana kita replaceUrl 
+    // supaya user tidak dapat balik ke halaman login
+    if(isLoginSuccess){
+      navigate("/home", {replace : true});
     }
   }
 
