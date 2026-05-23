@@ -1,7 +1,7 @@
 import "./../styles/login.css";
 import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
-import { users } from "./userStore";
+import { users, setCurrentUser } from "./userStore";
 import { createSignal } from "solid-js"
 
 function Login() {
@@ -19,6 +19,7 @@ function Login() {
     for (let i = 0; i < users().length; i++) {
       if (users()[i].email == email() && users()[i].password == password()) {
         isLoginSuccess = true;
+        setCurrentUser(users()[i]);
         navigate("/home"); // redirect to home page
         break;
       }
