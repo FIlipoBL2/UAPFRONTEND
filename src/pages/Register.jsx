@@ -1,7 +1,7 @@
 import "./../styles/register.css";
 import logo from "../assets/logo.png";
 import { A, useNavigate} from "@solidjs/router";
-import { users, setUsers } from "./userStore";
+import { setUsers } from "./userStore";
 import { createSignal } from "solid-js";
 
 
@@ -10,10 +10,24 @@ function Register() {
   const [username, setUsername] = createSignal("")
   const [email, setEmail] = createSignal("")
   const [password, setPassword] = createSignal("")
+  const [confirmPassword, setConfirmPassword] = createSignal("")
+
   /** useNavigate() untuk redirect ke halaman yang lain*/
   const navigate = useNavigate();
 
   function handleUsers(){
+    // Cek password dan re-type password
+    if(password() !== confirmPassword()){
+      alert("Password tidak cocok!");
+      return;
+    }
+
+    // Pastikan field tidak kosong
+    if(!username() || !password() || !email()){
+      alert("Field tidak boleh kosong!")
+      return;
+    }
+
     // Buat JSON untuk menyimpan semua datanya 
     const newUser = {
       username : username(),
@@ -53,7 +67,10 @@ function Register() {
           />
 
         <label>Confirm Password</label>
-        <input type="password" />
+        <input 
+          type="password"
+          value={confirmPassword()}
+          onInput={(e) => {setConfirmPassword(e.target.value)}} />
 
         <div class="button-group">
           <button onClick={handleUsers}>Create Account</button>
