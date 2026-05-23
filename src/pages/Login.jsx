@@ -2,29 +2,32 @@ import "./../styles/login.css";
 import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
 import { users } from "./userStore";
-import {createSignal } from "solid-js"
+import { createSignal } from "solid-js"
 
 function Login() {
 
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
   const navigate = useNavigate();
-  function handleLogin(){
+  console.log(users())
+  function handleLogin() {
+
     //cek apakah email ada di users
     let isLoginSuccess = false;
 
     //looping untuk semua isi array users cari username dan password yang sesuai
-    for(let i=0; i<users().length; i++){
-      if(users()[i].email == email() && users()[i].password == password()){
+    for (let i = 0; i < users().length; i++) {
+      if (users()[i].email == email() && users()[i].password == password()) {
         isLoginSuccess = true;
+        navigate("/home"); // redirect to home page
         break;
       }
     }
-    
+
     // kalau username dan pasword match maka kita redirect ke halaman home dimana kita replaceUrl 
     // supaya user tidak dapat balik ke halaman login
-    if(isLoginSuccess){
-      navigate("/home", {replace : true});
+    if (isLoginSuccess) {
+      navigate("/home", { replace: true });
     }
   }
 
@@ -35,18 +38,18 @@ function Login() {
         <img src={logo} alt="UAP Logo" class="logo" />
 
         <label>Email</label>
-        <input 
-          type="email" 
+        <input
+          type="email"
           value={email()}
-          onInput={(e) => {setEmail(e.target.value)}}
-          />
+          onInput={(e) => { setEmail(e.target.value) }}
+        />
 
         <label>Password</label>
-        <input 
+        <input
           type="password"
           value={password()}
-          onInput={(e) => {setPassword(e.target.value)}}
-          />
+          onInput={(e) => { setPassword(e.target.value) }}
+        />
 
         <div class="button-group">
           <button onClick={handleLogin}>Login</button>

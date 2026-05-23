@@ -9,6 +9,7 @@ function App() {
       <Route path="/" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/home" component={Home} />
+      <Route path="/home" component={Home} />
     </Router>
   );
 }
