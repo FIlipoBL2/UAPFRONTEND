@@ -1,10 +1,28 @@
-import { createSignal } from "solid-js";
 import logo from "../assets/logo.png";
 import { currentUser } from "../pages/userStore";
+import { searchQuery, setSearchQuery} from "../pages/userStore";
+import { useNavigate, useLocation } from "@solidjs/router";
 
 function Navbar() {
-  const [searchQuery, setSearchQuery] = createSignal("");
+  const navigate = useNavigate();
+  const location = useLocation();
   const activeUser = () => currentUser()?.username || "Guest";
+
+  const handleSearch = (e) => {
+    
+    /** Jika querynya itu kosong maka redirect ke home lagi */
+    const value = e.target.value;
+    if(value.length == 0){
+      navigate("/")
+    }
+    /** Set searchQuery dengan value yang sekarang
+     * kemudian redirect menggunakan navigate ke halaman search
+     */
+    setSearchQuery(value);
+    if (location.pathname !== "/search") {
+      navigate("/search");
+    }
+  };
 
   return (
     <nav style={{
@@ -24,12 +42,12 @@ function Navbar() {
       </div>
 
       {/* Center: Search Bar */}
-      <form class="search-bar" style={{ flex: 1, display: "flex", "justify-content": "center" }}>
+      <form class="search-bar" style={{ flex: 1, display: "flex", "justify-content": "center" }} onSubmit={(e) => e.preventDefault()}>
         <input
           type="search"
           placeholder="Search for games..."
           value={searchQuery()}
-          onInput={(e) => setSearchQuery(e.target.value)}
+          onInput={handleSearch}
           style={{ width: "100%", "max-width": "400px", padding: "10px 15px", "border-radius": "20px", border: "1px solid #bababaff", "font-size": "16px" }}
         />
       </form>

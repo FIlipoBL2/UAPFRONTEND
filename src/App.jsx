@@ -24,11 +24,11 @@ const mainPages = (props) => {
 function App() {
   return (
     <Router>
-      <Route path="/" component={Login} />
+      <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
 
       <Route component={mainPages}>
-        <Route path="/home" component={Home} />
+        <Route path="/" component={Home} />
         <Route path="/search" component={Search} />
         {/*Kalau mau nambah page simpen disini biar dia ke load navbar*/}
       </Route>
