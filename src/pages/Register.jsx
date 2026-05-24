@@ -37,7 +37,7 @@ function Register() {
     // menggunakan deconstrutor operator kita dapat menambahkan user baru ke dalam array users
     setUsers(prev => [...prev, newUser])
 
-    navigate("/")
+    navigate("/login")
   }
   return (
     <div class="page">
@@ -75,7 +75,7 @@ function Register() {
         <div class="button-group">
           <button onClick={handleUsers}>Create Account</button>
           
-          <A href="/">
+          <A href="/login">
             <button>Back to Login</button>
           </A>
         </div>

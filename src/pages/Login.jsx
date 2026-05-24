@@ -1,15 +1,15 @@
 import "./../styles/login.css";
-import { A } from "@solidjs/router";
+import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
-import { users } from "./userStore";
+import { users, setLoggedIn } from "./userStore";
+import { createSignal } from "solid-js";
 
-function Login() {
-
-  const [email, setEmail] = createSignal("")
-  const [password, setPassword] = createSignal("")
-  
-  function handleLogin(){
-    //cek apakah email ada di users
+  function Login() {
+    const navigate = useNavigate();
+    const [email, setEmail] = createSignal("")
+    const [password, setPassword] = createSignal("")
+    
+    function handleLogin(){
     let isLoginSuccess = false;
 
     for(let i=0; i<users().length; i++){
@@ -17,6 +17,13 @@ function Login() {
         isLoginSuccess = true;
         break;
       }
+    }
+
+    if(isLoginSuccess){
+      setLoggedIn(true);
+      navigate("/");        // add this
+    } else {
+      alert("Email atau password salah!");  // add this
     }
   }
 
