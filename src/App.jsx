@@ -4,6 +4,7 @@ import { Router, Route } from "@solidjs/router";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home" 
+import Search from "./pages/Search";
 
 // Import components simpen sini
 import Navbar from "./components/Navbar";
@@ -28,6 +29,7 @@ function App() {
 
       <Route component={mainPages}>
         <Route path="/home" component={Home} />
+        <Route path="/search" component={Search} />
         {/*Kalau mau nambah page simpen disini biar dia ke load navbar*/}
       </Route>
 
