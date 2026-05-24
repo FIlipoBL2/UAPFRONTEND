@@ -1,14 +1,14 @@
-import { createEffect, createSignal, For, Match, Switch } from "solid-js"
-import { games } from "../data/mockData"
+import { createEffect, createSignal, For, Match, Switch } from "solid-js";
+import { games } from "../data/mockData";
 import SearchGrid from "../components/SearchGrid";
 import { searchQuery } from "./userStore";
 
-function Search(){
+function Search() {
     const [currentPage, setCurrentPage] = createSignal(1);
     const itemsPerPage = 6;
 
     /** menggunakan createEffect agar saat input search bar diatas diketikan maka halaman akan kemabali ke 1 */
-    createEffect(()=>{
+    createEffect(() => {
         searchQuery();
         setCurrentPage(1);
     })
@@ -22,11 +22,11 @@ function Search(){
     const totalPages = () => Math.ceil(filteredItems().length / itemsPerPage);
 
     const nextPage = () => {
-        if(currentPage() < totalPages()) setCurrentPage(currentPage() + 1);
+        if (currentPage() < totalPages()) setCurrentPage(currentPage() + 1);
     };
 
     const previousPage = () => {
-        if(currentPage() > 1) setCurrentPage(currentPage() - 1);
+        if (currentPage() > 1) setCurrentPage(currentPage() - 1);
     };
 
     const firstPage = () => {
@@ -38,7 +38,7 @@ function Search(){
     }
 
     const pageNumbers = () => {
-        return Array.from({length: totalPages()}, (_, i) => i + 1);
+        return Array.from({ length: totalPages() }, (_, i) => i + 1);
     }
 
     const buttonStyle = (isDisabled) => ({
@@ -58,15 +58,15 @@ function Search(){
      * 
      * @returns data.json yang sesuai dengan query 
      */
-    function filteredItems(){
+    function filteredItems() {
         const query = searchQuery().toLowerCase().trim();
-        if(query.length == 0){
+        if (query.length == 0) {
             return games
-        }  
+        }
         return games.filter(game => game.title.toLowerCase().includes(query))
     }
 
-    return(
+    return (
         <div style={{ "font-family": "Arial, sans-serif", "background-color": "#f0f0f0", "min-height": "100vh" }}>
             <style>{`body { margin: 0; padding: 0; }`}</style>
             <Switch>
@@ -77,57 +77,57 @@ function Search(){
                 </Match>
                 <Match when={filteredItems().length !== 0}>
                     <SearchGrid games={paginateGrid()} />
-                        <div style={{
-                            display: "flex",
-                            "justify-content": "center",
-                            "align-items": "center",
-                            gap: "20px"
-                        }}>
+                    <div style={{
+                        display: "flex",
+                        "justify-content": "center",
+                        "align-items": "center",
+                        gap: "20px"
+                    }}>
 
-                        <button 
+                        <button
                             onClick={firstPage}
                             disabled={currentPage() === 1}
                             style={buttonStyle(currentPage() === 1)}
                         ><span>&laquo;</span></button>
 
-                        <button 
+                        <button
                             onClick={previousPage}
                             disabled={currentPage() === 1}
                             style={buttonStyle(currentPage() === 1)}
                         ><span>&lsaquo;</span></button>
 
-                            <div style={{ display: "flex", gap: "10px" }}>
+                        <div style={{ display: "flex", gap: "10px" }}>
                             <For each={pageNumbers()}>
-                                    {(num) => (
-                                        <button
+                                {(num) => (
+                                    <button
                                         onClick={() => setCurrentPage(num)}
-                                            style={{
-                                                padding: "10px 15px",
-                                                cursor: "pointer",
-                                                "background-color": currentPage() === num ? "#2d3648" : "#ffffff",
-                                                color: currentPage() === num ? "white" : "#2d3648",
-                                                border: "1px solid #2d3648",
-                                                "border-radius": "8px",
-                                                "font-weight": "bold"
-                                            }}
-                                        >
-                                            {num}
-                                        </button>
-                                    )}
-                                </For>
-                            </div>            
+                                        style={{
+                                            padding: "10px 15px",
+                                            cursor: "pointer",
+                                            "background-color": currentPage() === num ? "#2d3648" : "#ffffff",
+                                            color: currentPage() === num ? "white" : "#2d3648",
+                                            border: "1px solid #2d3648",
+                                            "border-radius": "8px",
+                                            "font-weight": "bold"
+                                        }}
+                                    >
+                                        {num}
+                                    </button>
+                                )}
+                            </For>
+                        </div>
 
                         <span style={{ "font-weight": "bold" }}>
                             Page {currentPage()} of {totalPages()}
                         </span>
 
-                        <button 
+                        <button
                             onClick={nextPage}
                             disabled={currentPage() === totalPages()}
                             style={buttonStyle(currentPage() === totalPages())}
                         ><span>&rsaquo;</span></button>
 
-                        <button 
+                        <button
                             onClick={lastPage}
                             disabled={currentPage() === totalPages()}
                             style={buttonStyle(currentPage() === totalPages())}
@@ -135,8 +135,8 @@ function Search(){
                     </div>
                 </Match>
             </Switch>
-           
-        </div>            
+
+        </div>
     );
 }
 
