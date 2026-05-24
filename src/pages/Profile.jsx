@@ -1,6 +1,7 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { currentUser, setCurrentUser, setUsers, updateUser } from "./userStore";
+import { reviews, games } from "../data/mockData";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
@@ -94,32 +95,32 @@ function AccountDetails() {
 }
 
 function MyReview() {
-  const [reviews, setReviews] = createSignal(MOCK_REVIEWS);
-
-  function handleDelete(id) {
-    // TODO: call your API to delete review
-    setReviews((prev) => prev.filter((r) => r.id !== id));
-  }
+  const userReviews = () => reviews
+    .filter(r => r.userId === currentUser()?.id)
+    .map(r => ({
+      ...r,
+      gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
+      gameImage: games.find(g => g.id === r.gameId)?.image || null,
+    }));
 
   return (
     <div class="content-panel">
       <h2 class="panel-title">My Review</h2>
-      {reviews().map((review) => (
+      {userReviews().length === 0 && (
+        <p>You haven't written any reviews yet.</p>
+      )}
+      {userReviews().map((review) => (
         <div class="review-card">
           <div class="review-thumb">
-            <span>{review.title}</span>
+            {review.gameImage
+              ? <img src={review.gameImage} style={{ width: "100%", height: "100%", "object-fit": "cover", "border-radius": "6px" }} />
+              : <span>{review.gameTitle}</span>
+            }
           </div>
           <div class="review-info">
-            <h3 class="review-title">{review.title}</h3>
-            <p class="review-desc">{review.description}</p>
+            <h3 class="review-title">{review.gameTitle}</h3>
+            <p class="review-desc">{review.text}</p>
           </div>
-          <button
-            class="delete-btn"
-            onClick={() => handleDelete(review.id)}
-            title="Delete review"
-          >
-            🗑
-          </button>
         </div>
       ))}
     </div>
