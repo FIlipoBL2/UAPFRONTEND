@@ -1,4 +1,3 @@
-import "./../styles/login.css";
 import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
 import { users, setCurrentUser } from "./userStore";
@@ -9,6 +8,7 @@ function Login() {
   const [email, setEmail] = createSignal("");
   const [password, setPassword] = createSignal("");
   const navigate = useNavigate();
+  const [error, setError] = createSignal("");
   console.log(users())
   function handleLogin() {
 
@@ -20,7 +20,6 @@ function Login() {
       if (users()[i].email == email() && users()[i].password == password()) {
         isLoginSuccess = true;
         setCurrentUser(users()[i]);
-        navigate("/home"); // redirect to home page
         break;
       }
     }
@@ -28,35 +27,126 @@ function Login() {
     // kalau username dan pasword match maka kita redirect ke halaman home dimana kita replaceUrl 
     // supaya user tidak dapat balik ke halaman login
     if (isLoginSuccess) {
-      navigate("/home", { replace: true });
+      navigate("/", { replace: true });
+    } else{
+      setError("Invalid email or password.");
     }
   }
 
   return (
-    <div class="page">
-      <div class="login-card">
-        <h1>Welcome to Uap</h1>
-        <img src={logo} alt="UAP Logo" class="logo" />
+    <div style={{
+      margin: 0,
+      "font-family": "Arial, sans-serif",
+      "background-color": "#efefef",
+      height: "100vh",
+      display: "flex",
+      "justify-content": "center",
+      "align-items": "center",
+    }}>
+      <div style={{
+        width: "500px",
+        height: "700px",
+        "background-color": "#d9d9d9",
+        "border-radius": "60px",
+        display: "flex",
+        "flex-direction": "column",
+        padding: "50px",
+        "box-sizing": "border-box",
+      }}>
+        <h1 style={{
+          "text-align": "center",
+          "font-size": "64px",
+          "margin-bottom": "10px",
+          margin: "0 0 10px 0",
+        }}>Welcome to Uap</h1>
 
-        <label>Email</label>
+        <img src={logo} alt="UAP Logo" style={{
+          width: "180px",
+          margin: "0 auto 10px auto",
+          display: "block",
+        }} />
+
+        <label style={{ "margin-top": "20px", "margin-bottom": "8px", "font-weight": "bold" }}>Email</label>
         <input
           type="email"
           value={email()}
-          onInput={(e) => { setEmail(e.target.value) }}
+          onInput={(e) => setEmail(e.target.value)}
+          style={{
+            height: "40px",
+            "border-radius": "8px",
+            border: "1px solid #ccc",
+            padding: "0 10px",
+            "font-size": "16px",
+            width: "100%",
+            "box-sizing": "border-box",
+            "flex-shrink": 0,
+          }}
         />
 
-        <label>Password</label>
+        <label style={{ "margin-top": "20px", "margin-bottom": "8px", "font-weight": "bold" }}>Password</label>
         <input
           type="password"
           value={password()}
-          onInput={(e) => { setPassword(e.target.value) }}
+          onInput={(e) => setPassword(e.target.value)}
+          style={{
+            height: "40px",
+            "border-radius": "8px",
+            border: "1px solid #ccc",
+            padding: "0 10px",
+            "font-size": "16px",
+            width: "100%",
+            "box-sizing": "border-box",
+            "flex-shrink": 0,
+          }}
         />
 
-        <div class="button-group">
-          <button onClick={handleLogin}>Login</button>
+        <p style={{
+          color: "red",
+          "font-size": "20px",
+          "margin-top": "8px",
+          height: "20px",
+          margin: "8px 0 0 0",
+        }}>
+          {error()}
+        </p>
+
+        <div style={{
+          "margin-top": "40px",
+          display: "flex",
+          gap: "20px",
+        }}>
+          <button onClick={handleLogin} style={{
+            "background-color": "#2f384d",
+            color: "white",
+            border: "none",
+            "border-radius": "8px",
+            padding: "14px 24px",
+            "font-size": "18px",
+            cursor: "pointer",
+          }}>Login</button>
 
           <A href="/register">
-            <button>Register</button>
+            <button style={{
+              "background-color": "#2f384d",
+              color: "white",
+              border: "none",
+              "border-radius": "8px",
+              padding: "14px 24px",
+              "font-size": "18px",
+              cursor: "pointer",
+            }}>Register</button>
+          </A>
+
+          <A href="/">
+            <button style={{
+              "background-color": "#2f384d",
+              color: "white",
+              border: "none",
+              "border-radius": "8px",
+              padding: "14px 24px",
+              "font-size": "18px",
+              cursor: "pointer",
+            }}>Back Home</button>
           </A>
         </div>
       </div>

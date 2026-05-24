@@ -1,6 +1,8 @@
+import { createSignal } from "solid-js";
+import { A } from "@solidjs/router";
 import logo from "../assets/logo.png";
 import { currentUser } from "../pages/userStore";
-import { searchQuery, setSearchQuery} from "../pages/userStore";
+import { searchQuery, setSearchQuery } from "../pages/userStore";
 import { useNavigate, useLocation } from "@solidjs/router";
 
 function Navbar() {
@@ -9,10 +11,10 @@ function Navbar() {
   const activeUser = () => currentUser()?.username || "Guest";
 
   const handleSearch = (e) => {
-    
+
     /** Jika querynya itu kosong maka redirect ke home lagi */
     const value = e.target.value;
-    if(value.length == 0){
+    if (value.length == 0) {
       navigate("/")
     }
     /** Set searchQuery dengan value yang sekarang
@@ -38,7 +40,9 @@ function Navbar() {
     }}>
       {/* Left side: Logo */}
       <div style={{ flex: 1, display: "flex", "justify-content": "flex-start" }}>
-        <img src={logo} alt="Logo" style={{ width: "150px" }} />
+        <A href="/">
+          <img src={logo} alt="Logo" style={{ width: "150px" }} />
+        </A>
       </div>
 
       {/* Center: Search Bar */}
@@ -54,9 +58,20 @@ function Navbar() {
 
       {/* Right side: User Profile */}
       <div style={{ flex: 1, display: "flex", "justify-content": "flex-end", "align-items": "center", gap: "10px" }}>
-        <span style={{ "font-weight": "bold", color: "#333", "font-size": "16px" }}>
-          {activeUser()}
-        </span>
+        <A href={currentUser() ? "/profile" : "/login"} style={{ "text-decoration": "none" }}>
+          <button style={{
+            "background-color": "#2f384d",
+            color: "white",
+            border: "none",
+            "border-radius": "8px",
+            padding: "12px 24px",
+            "font-size": "16px",
+            "font-weight": "bold",
+            cursor: "pointer",
+          }}>
+            {currentUser() ? currentUser().username : "Login"}
+          </button>
+        </A>
       </div>
     </nav>
   );
