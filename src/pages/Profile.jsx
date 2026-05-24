@@ -1,22 +1,11 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { loggedIn, setUsers, setLoggedIn } from "./userStore";
-
-// ─── Mock Data (replace with real API calls) ───────────────────────────────
-const MOCK_USER = {
-  username: "Vince Heinz",
-  email: "VinceHeinz@gmail.com",
-};
-
-const MOCK_REVIEWS = [
-  { id: 1, title: "Kripton 2", description: "Your Review Description" },
-  { id: 2, title: "Kiss Yourself", description: "Your Review Description" },
-];
+import { currentUser, setCurrentUser, setUsers, updateUser } from "./userStore";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
 function AccountDetails() {
-  const [user] = createSignal(MOCK_USER);
+  const user = () => currentUser() ?? { username: "", email: "", password: "" };
   const [showPasswordFields, setShowPasswordFields] = createSignal(false);
   const [oldPassword, setOldPassword] = createSignal("");
   const [newPassword, setNewPassword] = createSignal("");
@@ -33,11 +22,16 @@ function AccountDetails() {
       setMessage("Please fill in all password fields.");
       return;
     }
+    if (oldPassword() !== currentUser().password) {
+      setMessage("Old password is incorrect.");
+      return;
+    }
     if (newPassword() !== retypePassword()) {
       setMessage("New passwords do not match.");
       return;
     }
-    // TODO: call your API here
+
+    updateUser({ ...currentUser(), password: newPassword() });
     setMessage("Password updated successfully!");
     setShowPasswordFields(false);
     setOldPassword("");
@@ -142,14 +136,14 @@ export default function Profile() {
 
   function handleLogout() {
     // TODO: clear session/token
-    setLoggedIn(false);
+    setCurrentUser(null);
     navigate("/");
   }
 
   function handleDeleteAccount() {
     // TODO: call your API to delete account
-    setUsers(prev => prev.filter(u => u.email !== MOCK_USER.email));
-    setLoggedIn(false);
+    setUsers(prev => prev.filter(u => u.email !== currentUser()?.email));
+    setCurrentUser(null);
     navigate("/");
 
   }
@@ -162,61 +156,7 @@ export default function Profile() {
 
         body {
           background: #d4d4d4;
-          font-family: 'Segoe UI', sans-serif;
           min-height: 100vh;
-        }
-
-        /* ── Navbar ─────────────────────────────── */
-        .navbar {
-          background: #d4d4d4;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 24px;
-          height: 120px;
-          border-bottom: 1px solid #bbb;
-        }
-
-        .navbar-logo {
-          font-size: 28px;
-          font-weight: 700;
-          color: #222;
-          letter-spacing: -1px;
-        }
-
-        .search-bar {
-          display: flex;
-          align-items: center;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          padding: 8px 14px;
-          width: 380px;
-          gap: 8px;
-        }
-
-        .search-bar input {
-          border: none;
-          outline: none;
-          font-size: 15px;
-          color: #555;
-          width: 100%;
-          background: transparent;
-        }
-
-        .search-bar span { color: #888; font-size: 18px; }
-
-        .navbar-avatar {
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: #c0392b;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-weight: 700;
-          font-size: 22px;
         }
 
         /* ── Layout ─────────────────────────────── */
@@ -456,19 +396,6 @@ export default function Profile() {
 
         .btn-danger:hover { background: #c0392b; }
       `}</style>
-
-      {/* ── Navbar ── */}
-      <nav class="navbar">
-        <div class="navbar-logo">
-          {/* Replace with your actual logo image */}
-          <span style="font-family: monospace; font-size: 32px;">⚙</span>
-        </div>
-        <div class="search-bar">
-          <input type="text" placeholder="Search for games..." />
-          <span>🔍</span>
-        </div>
-        <div class="navbar-avatar">VH</div>
-      </nav>
 
       {/* ── Body ── */}
       <div class="profile-layout">

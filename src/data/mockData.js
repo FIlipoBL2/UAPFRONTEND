@@ -25,19 +25,19 @@ export const devices = [
 ];
 
 export const games = [
-  { id: 1, title: "Last Of Us", image: getPoster(1), deviceIds: [1] },
-  { id: 2, title: "Assasins's Creed: Black Flag", image: getPoster(2), deviceIds: [1, 3, 5] },
-  { id: 3, title: "Legend Of Zelda Breath of The Wild", image: getPoster(3), deviceIds: [1, 2] },
-  { id: 4, title: "God Of War", image: getPoster(4), deviceIds: [1] },
-  { id: 5, title: "Call of Duty Modern Warfare 2", image: getPoster(5), deviceIds: [1, 7] },
-  { id: 6, title: "Counter Strike 2", image: getPoster(6), deviceIds: [1, 2, 6] },
-  { id: 7, title: "Stardew Valley", image: getPoster(7), deviceIds: [1, 3, 5] },
-  { id: 8, title: "Elden Ring 2", image: getPoster(8), deviceIds: [1, 3] },
-  { id: 9, title: "Overwatch 3", image: getPoster(9), deviceIds: [1, 5, 6] },
-  { id: 10, title: "Half-Life 2", image: getPoster(10), deviceIds: [1] },
-  { id: 11, title: "Portal 2", image: getPoster(11), deviceIds: [1, 4] },
-  { id: 12, title: "Left 4 Dead 3", image: getPoster(12), deviceIds: [1, 4] },
-  { id: 13, title: "Disco Elysium", image: getPoster(13), deviceIds: [1, 3, 6] }
+  { id: 1, title: "Last Of Us", releaseDate: "2026-05-24", developer: "Vince<3" , publisher: "Unpar", image: getPoster(1), deviceIds: [1] },
+  { id: 2, title: "Assasins's Creed: Black Flag", releaseDate: "2026-05-24", developer: "Vince<3", publisher: "Unpar", image: getPoster(2), deviceIds: [1, 3, 5] },
+  { id: 3, title: "Legend Of Zelda Breath of The Wild", releaseDate: "2026-05-24", developer: "Vince<3", publisher: "Unpar", image: getPoster(3), deviceIds: [1, 2] },
+  { id: 4, title: "God Of War", releaseDate: "2026-05-24", developer: "Vince<3", publisher: "Unpar", image: getPoster(4), deviceIds: [1] },
+  { id: 5, title: "Call of Duty Modern Warfare 2", releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(5), deviceIds: [1, 7] },
+  { id: 6, title: "Counter Strike 2",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(6), deviceIds: [1, 2, 6] },
+  { id: 7, title: "Stardew Valley",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(7), deviceIds: [1, 3, 5] },
+  { id: 8, title: "Elden Ring 2",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(8), deviceIds: [1, 3] },
+  { id: 9, title: "Overwatch 3",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(9), deviceIds: [1, 5, 6] },
+  { id: 10, title: "Half-Life 2",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(10), deviceIds: [1] },
+  { id: 11, title: "Portal 2",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(11), deviceIds: [1, 4] },
+  { id: 12, title: "Left 4 Dead 3",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(12), deviceIds: [1, 4] },
+  { id: 13, title: "Disco Elysium",releaseDate: "2026-05-24",developer: "Vince<3", publisher: "Unpar", image: getPoster(13), deviceIds: [1, 3, 6] }
 ];
 
 export const reviews = [

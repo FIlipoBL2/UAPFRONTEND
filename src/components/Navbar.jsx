@@ -1,4 +1,5 @@
 import { createSignal } from "solid-js";
+import { A } from "@solidjs/router";
 import logo from "../assets/logo.png";
 import { currentUser } from "../pages/userStore";
 
@@ -20,7 +21,9 @@ function Navbar() {
     }}>
       {/* Left side: Logo */}
       <div style={{ flex: 1, display: "flex", "justify-content": "flex-start" }}>
+        <A href="/">
         <img src={logo} alt="Logo" style={{ width: "150px" }} />
+        </A>
       </div>
 
       {/* Center: Search Bar */}
@@ -36,9 +39,20 @@ function Navbar() {
 
       {/* Right side: User Profile */}
       <div style={{ flex: 1, display: "flex", "justify-content": "flex-end", "align-items": "center", gap: "10px" }}>
-        <span style={{ "font-weight": "bold", color: "#333", "font-size": "16px" }}>
-          {activeUser()}
-        </span>
+        <A href={currentUser() ? "/profile" : "/login"} style={{ "text-decoration": "none" }}>
+          <button style={{
+            "background-color": "#2f384d",
+            color: "white",
+            border: "none",
+            "border-radius": "8px",
+            padding: "12px 24px",
+            "font-size": "16px",
+            "font-weight": "bold",
+            cursor: "pointer",
+          }}>
+            {currentUser() ? currentUser().username : "Login"}
+          </button>
+        </A>
       </div>
     </nav>
   );
