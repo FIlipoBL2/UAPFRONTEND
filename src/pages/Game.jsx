@@ -1,5 +1,6 @@
-import { games,reviews } from "../data/mockData";
+import { games,reviews,devices } from "../data/mockData";
 import { useParams } from "@solidjs/router";
+import "../styles/game.css";
 
 const Game = () => {
     const params = useParams();
@@ -23,6 +24,11 @@ const Game = () => {
         return Math.round(totalScore / reviewCount)
     }
 
+    const deviceNames = selectedGames.deviceIds.map((deviceID) => {
+        const device = devices.find(device => device.id === deviceID);
+        return device ? device.name : "Unknown Device";
+    }).join(" / ");
+
     const avg = computeAvg();
     return (
         <>
@@ -39,7 +45,7 @@ const Game = () => {
                 </h1>
                 
                 <p style={{ "grid-area": "platform", "margin-top": "0" }}>
-                    Console / Console / Console
+                    {deviceNames}
                 </p>
             
                 <div style={{ "grid-area": "releaseDate", "padding-right": "16px" }}>
@@ -59,8 +65,8 @@ const Game = () => {
         <div class="addReviewContainer">
         <h2>My Score</h2>
         <div class="slider">
-            <input type="range" min="0" max="10" value="5" class="sliderInput" />
-            <div class="sliderValue">5</div>
+            <input type="range" min="0" max="100" value="50" class="sliderInput"></input>
+            <div class="sliderValue">50</div>
         </div>
         <div class="reviewBtnContainer">
             <button>Add my Review</button>
