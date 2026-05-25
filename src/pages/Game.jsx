@@ -34,33 +34,34 @@ const Game = () => {
         <>
         <div class="mainContainer">
             
-            <div>
+            <div class="gameImageContainer">
                 <img src={selectedGames?.image} alt="Game Image" />
             </div>
             
-            <div>
+            <div class="gameInfoContainer">
                 
                 <h1>
                     {selectedGames?.title}
                 </h1>
                 
-                <p>
+                <p class="platform">
                     {deviceNames}
                 </p>
             
-                <div>
+                <div class="releaseDateContainer">
                     <h2>Release Date</h2>
                     <h2>{selectedGames?.releaseDate}</h2>
                 </div>
             
-                <div>
+                <div class="scoreContainer">
                     <h2>Average Score</h2>
-                    <div style={{ "background-color": getScoreColor(avg), "border-radius": "12px", height: "40px", width: "40px", display: "flex", "justify-content": "center", "align-items": "center", "font-size": "24px", "font-weight": "bold" }}>
+                    <div class="scoreBox" style={{ "background-color": getScoreColor(avg)}}>
                         <p>{avg}</p>
                     </div>
                 </div>
                 
             </div>
+
         </div>
         <div class="addReviewContainer">
         <h2>My Score</h2>
@@ -71,6 +72,31 @@ const Game = () => {
         <div class="reviewBtnContainer">
             <button>Add my Review</button>
         </div>
+
+        <div class="reviewsContainer">
+            <div class="reviewHeader">
+                Search Reviews
+            </div>
+
+            <div class="review">
+                <div class="scoreBox">
+                    <p>9.0</p>
+                </div>
+                <h3>Reviewer Name</h3>
+                <p>Review text goes here. This is a sample review to demonstrate the layout of the reviews section.</p>
+                <button class="readMoreBtn">Read More</button>
+            </div>
+
+            <div class="pagination">
+                <button>prev</button>
+                <button>1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>4</button>
+                <button>next</button>
+            </div>
+        </div>
+
         </div>
         </>
     );

@@ -22,11 +22,16 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    justify-self: center;
 
-    width: 100%;
+    width: 500px;
     height: 100%;
 
     background-color: gray;
+}
+
+.gameImageContainer img {
+    max-width: 100%;
 }
 
 .gameInfoContainer {
@@ -204,7 +209,6 @@
 }
 
 .scoreBox {
-    background-color: yellow;
     border-radius: 12px;
     
     height: 40px;
