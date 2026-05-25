@@ -8,3 +8,5 @@ export function updateUser(updatedUser) {
   setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
   setCurrentUser(updatedUser);
 }
+
+export const [IsModalOpen, setIsModalOpen] = createSignal(false);
