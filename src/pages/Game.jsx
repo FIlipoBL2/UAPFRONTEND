@@ -32,28 +32,28 @@ const Game = () => {
     const avg = computeAvg();
     return (
         <>
-        <div style={{ display: "grid", "grid-template-columns": "1fr 1fr", "grid-template-rows": "1fr 1fr", "grid-template-areas": '"banner gameInfo" "reviews addReview"', margin: "0", padding: "20px", width: "100%", "box-sizing": "border-box" }}>
+        <div class="mainContainer">
             
-            <div style={{ "grid-area": "banner", display: "flex", "justify-content": "center", "align-items": "center", width: "100%", height: "100%", "background-color": "gray" }}>
+            <div>
                 <img src={selectedGames?.image} alt="Game Image" />
             </div>
             
-            <div style={{ "grid-area": "gameInfo", display: "grid", "grid-template-columns": "1fr 1fr", "grid-template-rows": "1fr 1fr 1fr", "grid-template-areas": '"title title" "platform platform" "releaseDate score"', "justify-content": "left", "align-items": "center", width: "100%", height: "100%", padding: "16px" }}>
+            <div>
                 
-                <h1 style={{ "grid-area": "title", "margin-bottom": "0" }}>
+                <h1>
                     {selectedGames?.title}
                 </h1>
                 
-                <p style={{ "grid-area": "platform", "margin-top": "0" }}>
+                <p>
                     {deviceNames}
                 </p>
             
-                <div style={{ "grid-area": "releaseDate", "padding-right": "16px" }}>
+                <div>
                     <h2>Release Date</h2>
                     <h2>{selectedGames?.releaseDate}</h2>
                 </div>
             
-                <div style={{ "grid-area": "score", display: "flex", "flex-direction": "column", "align-items": "center", "padding-left": "16px" }}>
+                <div>
                     <h2>Average Score</h2>
                     <div style={{ "background-color": getScoreColor(avg), "border-radius": "12px", height: "40px", width: "40px", display: "flex", "justify-content": "center", "align-items": "center", "font-size": "24px", "font-weight": "bold" }}>
                         <p>{avg}</p>
