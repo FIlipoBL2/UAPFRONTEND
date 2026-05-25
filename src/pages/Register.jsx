@@ -21,12 +21,21 @@ function Register() {
       return;
     }
 
-    const newUser = {
-      username: username(),
-      email: email(),
-      password: password()
-    };
-    setUsers(prev => [...prev, newUser]);
+    
+    setUsers(prev => {
+      const maxId = prev.length > 0 ? Math.max(...prev.map(u => u.id)) : 100;
+
+      const newId = maxId + 1;
+
+      const newUser = {
+        id: newId,
+        username: username(),
+        email: email(),
+        password: password()
+      };
+      
+      return [...prev, newUser];
+    });
     navigate("/login");
   }
 

@@ -1,6 +1,28 @@
 import "../styles/reviewModal.css"
-import { setIsModalOpen } from "../pages/userStore";
+import { setIsModalOpen, currentUser, setReview } from "../pages/userStore";
+import { createSignal } from "solid-js";
+
 const ReviewModal = (props) => {
+
+    const [reviewText, setReviewText] = createSignal("")
+
+    function handleSubmit(){
+        
+        setReview(prev => {
+            const maxId = prev.length > 0 ? Math.max(...prev.map(u => u.id)) : 1
+            const newId = maxId + 1
+            const newReview = {
+                id : newId,
+                gameId : props.game.id,
+                userId : currentUser()?.id,
+                score : props.score,
+                text : reviewText()
+            }
+            return [...prev, newReview]
+        })
+        setIsModalOpen(false)
+        
+    }
     return (
         <>
         <div class="modal-overlay">
@@ -28,8 +50,8 @@ const ReviewModal = (props) => {
                 </div>
                 <div class="input-review">
                     <p class="label">Type Your Review</p>
-                    <textarea placeholder=""></textarea>
-                    <button>Submit</button>
+                    <textarea placeholder="" value={reviewText()} onInput={(e) => setReviewText(e.target.value)}></textarea>
+                    <button onClick={handleSubmit}>Submit</button>
                 </div>
             </div>
         </div>

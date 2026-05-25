@@ -1,9 +1,9 @@
-import { games,reviews,devices } from "../data/mockData";
+import { games,devices } from "../data/mockData";
 import { useParams } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
-import { IsModalOpen, setIsModalOpen } from "./userStore";
+import { IsModalOpen, setIsModalOpen, review } from "./userStore";
 
 const Game = () => {
     const params = useParams();
@@ -19,13 +19,13 @@ const Game = () => {
     const computeAvg = () =>{
         let totalScore = 0;
         let reviewCount = 0;
-        reviews.forEach((val)=>{
+        review().forEach((val)=>{
             if(val.gameId === selectedGames.id){
-                totalScore += val.score;
+                totalScore += Number(val.score);
                 reviewCount++;
             }
         })
-        return Math.round(totalScore / reviewCount)
+        return reviewCount == 0 ? 0 : Math.round(totalScore / reviewCount)
     }
 
     const deviceNames = selectedGames.deviceIds.map((deviceID) => {
@@ -33,7 +33,8 @@ const Game = () => {
         return device ? device.name : "Unknown Device";
     }).join(" / ");
 
-    const avg = computeAvg();
+    //harus dijadikan arrow function untuk menjadi reactive
+    const avg = () => computeAvg();
     return (
         <>
         <div class="mainContainer">
@@ -59,7 +60,7 @@ const Game = () => {
             
                 <div class="scoreContainer">
                     <h2>Average Score</h2>
-                    <div class="scoreBox" style={{ "background-color": getScoreColor(avg)}}>
+                    <div class="scoreBox" style={{ "background-color": getScoreColor(avg())}}>
                         <p>{avg}</p>
                     </div>
                 </div>
