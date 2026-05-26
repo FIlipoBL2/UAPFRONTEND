@@ -1,4 +1,4 @@
-import { games,devices } from "../data/mockData";
+import { games,devices,reviews } from "../data/mockData";
 import { useParams } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal } from "solid-js";
@@ -32,6 +32,24 @@ const Game = () => {
         const device = devices.find(device => device.id === deviceID);
         return device ? device.name : "Unknown Device";
     }).join(" / ");
+
+    const[currentPage, setCurrentPage] = createSignal(1);
+    const numPerPage = 3;
+    const totalPages = Math.ceil(reviews.length / numPerPage);
+    const currReviews = () => {
+        const startIndex = (currentPage() - 1) * numPerPage;
+        return reviews.slice(startIndex, startIndex + numPerPage);
+    };
+    const nextPage = () => {
+        if (currentPage() < totalPages) {
+            setCurrentPage(currentPage() + 1);
+        }
+    };
+    const prevPage = () => {
+        if (currentPage() > 1) {
+            setCurrentPage(currentPage() - 1);
+        }
+    };
 
     //harus dijadikan arrow function untuk menjadi reactive
     const avg = () => computeAvg();
@@ -84,41 +102,30 @@ const Game = () => {
                         Search Reviews
                     </div>
 
-                    <div class="review">
-                        <div class="scoreBox">
-                            <p>9.0</p>
-                        </div>
-                        <h3>Reviewer Name</h3>
-                        <p>Review text goes here. This is a sample review to demonstrate the layout of the reviews section.</p>
-                        {/* <button class="readMoreBtn">Read More</button> */}
-                    </div>
+                    <For each={currReviews()}>
+                        {(review) => (
+                            <div class="review">
+                                <div class="scoreBox" style={{ "background-color": getScoreColor(review.score)}}>
+                                    <p>{review.score}</p>
+                                </div>
 
-                    <div class="review">
-                        <div class="scoreBox">
-                            <p>9.0</p>
-                        </div>
-                        <h3>Reviewer Name</h3>
-                        <p>Review text goes here. This is a sample review to demonstrate the layout of the reviews section.</p>
-                        {/* <button class="readMoreBtn">Read More</button> */}
-                    </div>
-
-                    <div class="review">
-                        <div class="scoreBox">
-                            <p>9.0</p>
-                        </div>
-                        <h3>Reviewer Name</h3>
-                        <p>Review text goes here. This is a sample review to demonstrate the layout of the reviews section.</p>
-                        {/* <button class="readMoreBtn">Read More</button> */}
-                    </div>
+                                <h3>{review.userId}</h3>
+                                <p>{review.text}</p>
+                                {/* <button class="readMoreBtn">Read More</button> */}
+                            </div>
+                        )}
+                    </For>
 
                     <div class="pagination">
-                        <button>prev</button>
-                        <button>1</button>
-                        <button>2</button>
-                        <button>3</button>
-                        <button>4</button>
-                        <button>5</button>
-                        <button>next</button>
+                        <button onClick={prevPage} disabled={currentPage() === 1}>Previous</button>
+
+                        <For each={Array.from({ length: totalPages }, (_, i) => i + 1)}>
+                            {(page) => (
+                                <button onClick={() => setCurrentPage(page)}>{page}</button>
+                            )}
+                        </For>
+
+                        <button onClick={nextPage} disabled={currentPage() === totalPages}>Next</button>
                     </div>
                 </div>
             </div>

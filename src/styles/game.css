@@ -178,7 +178,7 @@
     text-align: left;
 }
 
-.review {
+.review {    
     grid-row: 2;
     
     justify-self: center;
