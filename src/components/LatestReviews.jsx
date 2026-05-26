@@ -6,21 +6,16 @@ function LatestReviews() {
   return (
     <section>
       <h3 style={{ "font-size": "24px", "margin-bottom": "30px" }}>LATEST REVIEW</h3>
-
-      {/* Inline style block for keyframes and hover state since CSS files aren't used */}
       <style>
         {`
         .marquee-wrapper {
-          overflow: hidden;
-          width: 100%;
-          white-space: nowrap;
-          padding-bottom: 20px;
+          overflow:hidden;
         }
         .marquee-content {
           display: inline-flex;
           gap: 30px;
           /* The animation moves the content left by exactly half its width */
-          animation: scroll-marquee 15s linear infinite;
+          animation: scroll-marquee 30s linear infinite;
         }
         .marquee-wrapper:hover .marquee-content {
           animation-play-state: paused;
