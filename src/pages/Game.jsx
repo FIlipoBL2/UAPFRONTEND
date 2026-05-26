@@ -36,15 +36,18 @@ const Game = () => {
     const[currentPage, setCurrentPage] = createSignal(1);
     const numPerPage = 3;
     const totalPages = Math.ceil(reviews.length / numPerPage);
+
     const currReviews = () => {
         const startIndex = (currentPage() - 1) * numPerPage;
         return reviews.slice(startIndex, startIndex + numPerPage);
     };
+
     const nextPage = () => {
         if (currentPage() < totalPages) {
             setCurrentPage(currentPage() + 1);
         }
     };
+    
     const prevPage = () => {
         if (currentPage() > 1) {
             setCurrentPage(currentPage() - 1);
