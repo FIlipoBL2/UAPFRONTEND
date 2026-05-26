@@ -1,4 +1,4 @@
-import { games,devices,reviews } from "../data/mockData";
+import { games, devices, reviews } from "../data/mockData";
 import { useParams } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal } from "solid-js";

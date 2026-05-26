@@ -201,6 +201,10 @@
     grid-area: score;
 }
 
+.review .scoreBox p {
+    margin: 0;
+}
+
 .review h3 {
     grid-area: name;
     font-size: 18px;
