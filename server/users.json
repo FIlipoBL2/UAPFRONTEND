@@ -1,0 +1,9 @@
+[
+  { "id": 101, "username": "Screen Hype", "email": "hype@test.com", "password": "password123" },
+  { "id": 102, "username": "Softpedia", "email": "soft@test.com", "password": "password123" },
+  { "id": 103, "username": "TheSixthAxis", "email": "sixth@test.com", "password": "password123" },
+  { "id": 104, "username": "John Doe", "email": "john@test.com", "password": "password123" },
+  { "id": 105, "username": "Jane Doe", "email": "jane@test.com", "password": "password123" },
+  { "id": 106, "username": "Capybara", "email": "capy@test.com", "password": "password123" },
+  { "id": 107, "username": "Wombat", "email": "wombat@test.com", "password": "password123" }
+]

@@ -11,32 +11,36 @@ function Register() {
   const [error, setError] = createSignal("");
   const navigate = useNavigate();
 
-  function handleUsers() {
-    if (!username() || !password() || !email()) {
-      setError("Field tidak boleh kosong!");
-      return;
-    }
-    if (password() !== confirmPassword()) {
-      setError("Password tidak cocok!");
+  async function handleUsers() {
+    if(password() !== confirmPassword()){
+      setError("Password do not match!");
       return;
     }
 
-    
-    setUsers(prev => {
-      const maxId = prev.length > 0 ? Math.max(...prev.map(u => u.id)) : 100;
+    try {
+      const response = await fetch('http://localhost:8080/api/register', {
+        method : "POST",
+        headers : {
+          "Content-Type": "application/JSON",
+        },
+        body : JSON.stringify({
+          username : username(),
+          email : email(),
+          password : password(),
+        })
+      })
 
-      const newId = maxId + 1;
-
-      const newUser = {
-        id: newId,
-        username: username(),
-        email: email(),
-        password: password()
-      };
+      if(response.ok){
+        const data = await response.json();
+        console.log(data.message)
+        navigate("/login");
+      }else{
+        const data = await response.json();
+        setError(data.message)
+      }
+    } catch (err) {
       
-      return [...prev, newUser];
-    });
-    navigate("/login");
+    }
   }
 
   const inputStyle = {
