@@ -1,7 +1,11 @@
 const users = require('./users.json')
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
+const path = require('path')
+
 const app = express();
+
 
 const port = 8080
 
@@ -22,7 +26,7 @@ app.post('/api/login', (req, res)=>{
         const dataUser = {
             id : matchedUser.id,
             username : matchedUser.username,
-            name : matchedUser.password,
+            name : matchedUser.name,
             password : matchedUser.password
         }
         res.status(200).json({
@@ -37,6 +41,42 @@ app.post('/api/login', (req, res)=>{
     }
 })
 
+app.post('/api/register', (req, res)=>{
+    const { username, email, password} = req.body
+
+    if(!username || !email || !password){
+        return res.status(400).json({ message : "Semua field harus diisi!"});
+    }
+    const existingUser = users.find(u => u.email === email);
+
+    if(existingUser){
+        return res.status(400).json({message : "Email sudah terdaftar!"});
+    }
+
+    const newId = users.length === 0 ? 101 : users[users.length-1].id+1 
+    const newUser = {
+        id : newId,
+        username : username,
+        email : email,
+        password : password
+    }
+    users.push(newUser)
+
+    const filePath = path.join(__dirname, 'users.json');
+
+    fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
+        if(err){
+            console.error("Gagal menulis ke file");
+            users.pop();
+            return res.status(400).json({ message : "Terjadi kesalahan saat menyimpan data"})
+        }
+
+        res.status(201).json({
+            message : "Registrasi berhasil",
+            user : newUser
+        });
+    })
+})
 
 app.listen(port, () =>{
     console.log("Listening...")
