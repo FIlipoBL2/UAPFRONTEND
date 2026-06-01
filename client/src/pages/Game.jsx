@@ -1,14 +1,16 @@
 import { games, devices, reviews } from "../data/mockData";
-import { useParams } from "@solidjs/router";
+import { useParams, useNavigate } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
-import { IsModalOpen, setIsModalOpen, review } from "./userStore";
+import { IsModalOpen, setIsModalOpen, review, currentUser } from "./userStore";
+
 
 const Game = () => {
     const params = useParams();
     const selectedGames = games.find(game => game.id === Number(params.id));
     const [slider, setSlider] = createSignal(50);
+    const navigate = useNavigate();
 
     const getScoreColor = (score) => {
         if (score < 60) return "#ff4d4d"; // Red
@@ -93,7 +95,13 @@ const Game = () => {
                         <div class="sliderValue">{Number(slider())}</div>
                     </div>
                     <div class="reviewBtnContainer">
-                        <button onClick={() => setIsModalOpen(prev => !prev)}>Add my Review</button>
+                        <button onClick={() => {
+                            if (!currentUser()){
+                                navigate("/login");
+                            } else{
+                                setIsModalOpen(prev => !prev);
+                            }
+                        }}>Add my Review</button>
                     </div>
                     <Show when={IsModalOpen()}>
                         <ReviewModal game={selectedGames} setScore={setSlider} score={slider()}/>
