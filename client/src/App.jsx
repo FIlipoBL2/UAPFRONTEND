@@ -1,4 +1,6 @@
 import { Router, Route } from "@solidjs/router";
+import { createEffect } from "solid-js";
+import { currentUser, setCurrentUser } from "./pages/userStore";
 
 // Import pages simpen sini
 import Login from "./pages/Login";
@@ -24,6 +26,25 @@ const mainPages = (props) => {
 };
 
 function App() {
+  
+  createEffect(async () => {
+    if (!currentUser()) {
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const response = await fetch(`http://localhost:8080/api/users/${token}`);
+          if (response.ok) {
+            const data = await response.json();
+            setCurrentUser(data.user);
+          } else {
+            localStorage.removeItem("token");
+          }
+        } catch (err) {
+          console.error("Failed to restore session");
+        }
+      }
+    }
+  });
   return (
     <Router>
       <Route path="/login" component={Login} />

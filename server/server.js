@@ -127,3 +127,14 @@ app.delete('/api/users/:id', (req, res) => {
     res.status(200).json({ message: "Akun berhasil dihapus" });
   });
 });
+
+app.get('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find(u => u.id === id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  }
+
+  res.status(200).json({ user });
+});

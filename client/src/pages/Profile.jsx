@@ -152,6 +152,7 @@ export default function Profile() {
 
   function handleLogout() {
     // TODO: clear session/token
+    localStorage.removeItem("token");
     setCurrentUser(null);
     navigate("/");
   }
