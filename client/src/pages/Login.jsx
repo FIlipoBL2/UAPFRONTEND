@@ -10,26 +10,31 @@ function Login() {
   const navigate = useNavigate();
   const [error, setError] = createSignal("");
   console.log(users())
-  function handleLogin() {
+  async function handleLogin() {
+    try{
+      const response = await fetch("http://localhost:8080/api/login", {
+        method : "POST",
+        headers : {
+          "Content-Type" : "application/json",
+        },
+        body : JSON.stringify({
+          email : email(),
+          password: password()
+        }),
+      })
 
-    //cek apakah email ada di users
-    let isLoginSuccess = false;
+      if(response.ok){
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        setCurrentUser(data.user)
+        navigate("/", {replace : true})
 
-    //looping untuk semua isi array users cari username dan password yang sesuai
-    for (let i = 0; i < users().length; i++) {
-      if (users()[i].email == email() && users()[i].password == password()) {
-        isLoginSuccess = true;
-        setCurrentUser(users()[i]);
-        break;
+      }else{
+        setError("Invalid email or password")
       }
-    }
-
-    // kalau username dan pasword match maka kita redirect ke halaman home dimana kita replaceUrl 
-    // supaya user tidak dapat balik ke halaman login
-    if (isLoginSuccess) {
-      navigate("/", { replace: true });
-    } else{
-      setError("Invalid email or password.");
+    }catch(err){
+      console.log(err);
+      setError("Gagal terhubung ke server")
     }
   }
 

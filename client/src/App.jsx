@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home"
 import Search from "./pages/Search";
 import Profile from "./pages/Profile";
+import Game from "./pages/Game"
 
 // Import components simpen sini
 import Navbar from "./components/Navbar";
@@ -31,6 +32,7 @@ function App() {
         <Route path="/" component={Home} />
         <Route path="/search" component={Search} />
         <Route path="/profile" component={Profile} />
+        <Route path="/details/:id" component={Game} />
         {/*Kalau mau nambah page simpen disini biar dia ke load navbar*/}
       </Route>
 
