@@ -156,11 +156,25 @@ export default function Profile() {
     navigate("/");
   }
 
-  function handleDeleteAccount() {
-    // TODO: call your API to delete account
-    setUsers(prev => prev.filter(u => u.email !== currentUser()?.email));
-    setCurrentUser(null);
-    navigate("/");
+  async function handleDeleteAccount() {
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}`,{
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+      })
+
+      if (response.ok){
+        setUsers(prev => prev.filter(u => u.id !== currentUser().id));
+        setCurrentUser(null);
+        localStorage.removeItem("token");
+        navigate("/");
+      } else{
+        const data = await response.json();
+        console.error(data.message);
+      }
+    }catch (err){
+      console.log("Failed to connect to server")
+    }
 
   }
 

@@ -1,11 +1,5 @@
 [
   {
-    "id": 101,
-    "username": "Screen Hype",
-    "email": "hype@test.com",
-    "password": "password1234"
-  },
-  {
     "id": 102,
     "username": "Softpedia",
     "email": "soft@test.com",
@@ -46,5 +40,11 @@
     "username": "bryan",
     "email": "bryan@test.com",
     "password": "1234"
+  },
+  {
+    "id": 109,
+    "username": "ScreenHypeRemake",
+    "email": "hype@test.com",
+    "password": "password123"
   }
 ]
