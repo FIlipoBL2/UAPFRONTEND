@@ -18,26 +18,41 @@ function AccountDetails() {
     setMessage("");
   }
 
-  function handleSubmitNewPassword() {
+  async function handleSubmitNewPassword() {
     if (!oldPassword() || !newPassword() || !retypePassword()) {
       setMessage("Please fill in all password fields.");
       return;
     }
-    if (oldPassword() !== currentUser().password) {
-      setMessage("Old password is incorrect.");
-      return;
-    }
+
+    // Remove Old password check, cause now its checked at server.js
+
     if (newPassword() !== retypePassword()) {
       setMessage("New passwords do not match.");
       return;
     }
 
-    updateUser({ ...currentUser(), password: newPassword() });
-    setMessage("Password updated successfully!");
-    setShowPasswordFields(false);
-    setOldPassword("");
-    setNewPassword("");
-    setRetypePassword("");
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}/password`,{
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          oldPassword: oldPassword(),
+          newPassword: newPassword(),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok){
+        updateUser({...currentUser(), password: newPassword()});
+        setMessage("Password updated successfully!");
+        setShowPasswordFields(false);
+        setOldPassword("");
+        setNewPassword("");
+        setRetypePassword("");
+      }
+    } catch (err){
+      setMessage("Failed to connect to server")
+    }
   }
 
   return (
