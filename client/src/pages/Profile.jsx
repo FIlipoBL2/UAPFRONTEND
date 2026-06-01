@@ -18,26 +18,41 @@ function AccountDetails() {
     setMessage("");
   }
 
-  function handleSubmitNewPassword() {
+  async function handleSubmitNewPassword() {
     if (!oldPassword() || !newPassword() || !retypePassword()) {
       setMessage("Please fill in all password fields.");
       return;
     }
-    if (oldPassword() !== currentUser().password) {
-      setMessage("Old password is incorrect.");
-      return;
-    }
+
+    // Remove Old password check, cause now its checked at server.js
+
     if (newPassword() !== retypePassword()) {
       setMessage("New passwords do not match.");
       return;
     }
 
-    updateUser({ ...currentUser(), password: newPassword() });
-    setMessage("Password updated successfully!");
-    setShowPasswordFields(false);
-    setOldPassword("");
-    setNewPassword("");
-    setRetypePassword("");
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}/password`,{
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          oldPassword: oldPassword(),
+          newPassword: newPassword(),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok){
+        updateUser({...currentUser(), password: newPassword()});
+        setMessage("Password updated successfully!");
+        setShowPasswordFields(false);
+        setOldPassword("");
+        setNewPassword("");
+        setRetypePassword("");
+      }
+    } catch (err){
+      setMessage("Failed to connect to server")
+    }
   }
 
   return (
@@ -137,15 +152,30 @@ export default function Profile() {
 
   function handleLogout() {
     // TODO: clear session/token
+    localStorage.removeItem("token");
     setCurrentUser(null);
     navigate("/");
   }
 
-  function handleDeleteAccount() {
-    // TODO: call your API to delete account
-    setUsers(prev => prev.filter(u => u.email !== currentUser()?.email));
-    setCurrentUser(null);
-    navigate("/");
+  async function handleDeleteAccount() {
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}`,{
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+      })
+
+      if (response.ok){
+        setUsers(prev => prev.filter(u => u.id !== currentUser().id));
+        setCurrentUser(null);
+        localStorage.removeItem("token");
+        navigate("/");
+      } else{
+        const data = await response.json();
+        console.error(data.message);
+      }
+    }catch (err){
+      console.log("Failed to connect to server")
+    }
 
   }
 

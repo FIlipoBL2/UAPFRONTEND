@@ -81,3 +81,60 @@ app.post('/api/register', (req, res)=>{
 app.listen(port, () =>{
     console.log("Listening...")
 })
+
+app.put('/api/users/:id/password', (req, res) => {
+  const id = parseInt(req.params.id);
+  const { oldPassword, newPassword } = req.body;
+
+  const userIndex = users.findIndex(u => u.id === id);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  }
+
+  if (users[userIndex].password !== oldPassword) {
+    return res.status(401).json({ message: "Password lama salah" });
+  }
+
+  users[userIndex].password = newPassword;
+
+  const filePath = path.join(__dirname, 'users.json');
+  fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
+    if (err) {
+      users[userIndex].password = oldPassword; // rollback
+      return res.status(500).json({ message: "Gagal menyimpan data" });
+    }
+    res.status(200).json({ message: "Password berhasil diubah" });
+  });
+});
+
+app.delete('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+
+  const userIndex = users.findIndex(u => u.id === id);
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  }
+
+  users.splice(userIndex, 1);
+
+  const filePath = path.join(__dirname, 'users.json');
+  fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Gagal menyimpan data" });
+    }
+    res.status(200).json({ message: "Akun berhasil dihapus" });
+  });
+});
+
+app.get('/api/users/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const user = users.find(u => u.id === id);
+
+  if (!user) {
+    return res.status(404).json({ message: "User tidak ditemukan" });
+  }
+
+  res.status(200).json({ user });
+});
