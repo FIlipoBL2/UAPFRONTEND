@@ -1,9 +1,9 @@
 import { games, devices, reviews } from "../data/mockData";
 import { useParams, useNavigate } from "@solidjs/router";
 import "../styles/game.css";
-import { createSignal } from "solid-js";
+import { createSignal, Show, For } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
-import { IsModalOpen, setIsModalOpen, review, currentUser } from "./userStore";
+import { userStore, setUserStore } from "./userStore";
 
 
 const Game = () => {
@@ -21,7 +21,7 @@ const Game = () => {
     const computeAvg = () =>{
         let totalScore = 0;
         let reviewCount = 0;
-        review().forEach((val)=>{
+        userStore.reviews.forEach((val)=>{
             if(val.gameId === selectedGames.id){
                 totalScore += Number(val.score);
                 reviewCount++;
@@ -83,7 +83,7 @@ const Game = () => {
                     <div class="scoreContainer">
                         <h2>Average Score</h2>
                         <div class="scoreBox" style={{ "background-color": getScoreColor(avg())}}>
-                            <p>{avg}</p>
+                            <p>{avg()}</p>
                         </div>
                     </div>
                 </div>
@@ -96,14 +96,14 @@ const Game = () => {
                     </div>
                     <div class="reviewBtnContainer">
                         <button onClick={() => {
-                            if (!currentUser()){
+                            if (!userStore.currentUser){
                                 navigate("/login");
                             } else{
-                                setIsModalOpen(prev => !prev);
+                                setUserStore("isModalOpen", prev => !prev);
                             }
                         }}>Add my Review</button>
                     </div>
-                    <Show when={IsModalOpen()}>
+                    <Show when={userStore.isModalOpen}>
                         <ReviewModal game={selectedGames} setScore={setSlider} score={slider()}/>
                     </Show>
                 </div>

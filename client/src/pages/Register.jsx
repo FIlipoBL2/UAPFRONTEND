@@ -1,6 +1,5 @@
 import logo from "../assets/logo.png";
 import { A, useNavigate } from "@solidjs/router";
-import { setUsers } from "./userStore";
 import { createSignal } from "solid-js";
 
 function Register() {

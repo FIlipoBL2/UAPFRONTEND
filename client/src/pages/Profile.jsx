@@ -1,12 +1,12 @@
 import { createSignal } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { currentUser, setCurrentUser, setUsers, updateUser } from "./userStore";
+import { userStore, setUserStore, updateUser } from "./userStore";
 import { reviews, games } from "../data/mockData";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
 function AccountDetails() {
-  const user = () => currentUser() ?? { username: "", email: "", password: "" };
+  const user = () => userStore.currentUser ?? { username: "", email: "", password: "" };
   const [showPasswordFields, setShowPasswordFields] = createSignal(false);
   const [oldPassword, setOldPassword] = createSignal("");
   const [newPassword, setNewPassword] = createSignal("");
@@ -32,7 +32,7 @@ function AccountDetails() {
     }
 
     try{
-      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}/password`,{
+      const response = await fetch(`http://localhost:8080/api/users/${userStore.currentUser.id}/password`,{
         method: "PUT",
         headers: {"Content-Type": "application/json"},
         body: JSON.stringify({
@@ -43,7 +43,7 @@ function AccountDetails() {
 
       const data = await response.json();
       if (response.ok){
-        updateUser({...currentUser(), password: newPassword()});
+        updateUser({...userStore.currentUser, password: newPassword()});
         setMessage("Password updated successfully!");
         setShowPasswordFields(false);
         setOldPassword("");
@@ -111,7 +111,7 @@ function AccountDetails() {
 
 function MyReview() {
   const userReviews = () => reviews
-    .filter(r => r.userId === currentUser()?.id)
+    .filter(r => r.userId === userStore.currentUser?.id)
     .map(r => ({
       ...r,
       gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
@@ -153,27 +153,27 @@ export default function Profile() {
   function handleLogout() {
     // TODO: clear session/token
     localStorage.removeItem("token");
-    setCurrentUser(null);
+    setUserStore("currentUser", null);
     navigate("/");
   }
 
   async function handleDeleteAccount() {
     try{
-      const response = await fetch(`http://localhost:8080/api/users/${currentUser().id}`,{
+      const response = await fetch(`http://localhost:8080/api/users/${userStore.currentUser.id}`,{
         method: "DELETE",
         headers: {"Content-Type": "application/json"},
       })
 
       if (response.ok){
-        setUsers(prev => prev.filter(u => u.id !== currentUser().id));
-        setCurrentUser(null);
+        setUserStore("users", (prev) => prev.filter(u => u.id !== userStore.currentUser.id));
+        setUserStore("currentUser", null);
         localStorage.removeItem("token");
         navigate("/");
       } else{
         const data = await response.json();
         console.error(data.message);
       }
-    }catch (err){
+    }catch(err){
       console.log("Failed to connect to server")
     }
 

@@ -1,6 +1,6 @@
 import { A, useNavigate } from "@solidjs/router";
 import logo from "../assets/logo.png";
-import { users, setCurrentUser } from "./userStore";
+import { userStore, setUserStore } from "./userStore";
 import { createSignal } from "solid-js"
 
 function Login() {
@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = createSignal("");
   const navigate = useNavigate();
   const [error, setError] = createSignal("");
-  console.log(users())
+  console.log(userStore.users)
   async function handleLogin() {
     try{
       const response = await fetch("http://localhost:8080/api/login", {
@@ -26,7 +26,7 @@ function Login() {
       if(response.ok){
         const data = await response.json();
         localStorage.setItem("token", data.token);
-        setCurrentUser(data.user)
+        setUserStore("currentUser", data.user)
         navigate("/", {replace : true})
 
       }else{

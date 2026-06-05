@@ -1,7 +1,7 @@
 import { createEffect, createSignal, For, Match, Switch } from "solid-js";
 import { games } from "../data/mockData";
 import SearchGrid from "../components/SearchGrid";
-import { searchQuery } from "./userStore";
+import { userStore } from "./userStore";
 
 function Search() {
     const [currentPage, setCurrentPage] = createSignal(1);
@@ -9,7 +9,7 @@ function Search() {
 
     /** menggunakan createEffect agar saat input search bar diatas diketikan maka halaman akan kemabali ke 1 */
     createEffect(() => {
-        searchQuery();
+        userStore.searchQuery;
         setCurrentPage(1);
     })
 
@@ -59,7 +59,7 @@ function Search() {
      * @returns data.json yang sesuai dengan query 
      */
     function filteredItems() {
-        const query = searchQuery().toLowerCase().trim();
+        const query = userStore.searchQuery.toLowerCase().trim();
         if (query.length == 0) {
             return games
         }
