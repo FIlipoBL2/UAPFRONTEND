@@ -17,6 +17,15 @@ import Navbar from "./components/Navbar";
 const mainPages = (props) => {
   return (
     <>
+      <style>{`
+        * {
+          box-sizing: border-box;
+        }
+        body {
+          margin: 0;
+          padding: 0;
+        }
+      `}</style>
       <Navbar />
       <div>
         {props.children}

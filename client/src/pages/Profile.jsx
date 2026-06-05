@@ -1,12 +1,7 @@
 import { createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-<<<<<<< HEAD
-import { currentUser, setCurrentUser, setUsers, updateUser } from "./userStore";
-import { games } from "../data/mockData";
-=======
 import { userStore, setUserStore, updateUser } from "./userStore";
-import { reviews, games } from "../data/mockData";
->>>>>>> 3199b2a0aae597510491b4ae1f58570bb1e9cc24
+import { games } from "../data/mockData";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
@@ -118,7 +113,7 @@ function MyReview() {
   const [userReviews, setUserReviews] = createSignal([]);
 
   onMount(async () => {
-    const response = await fetch(`http://localhost:8080/api/reviews/${currentUser()?.id}`);
+    const response = await fetch(`http://localhost:8080/api/reviews/${userStore.currentUser?.id}`);
     if (response.ok) {
       const data = await response.json();
       setUserReviews(data.reviews.map(r => ({
@@ -156,6 +151,7 @@ function MyReview() {
             <h3 class="review-title">{review.gameTitle}</h3>
             <p class="review-desc">{review.text}</p>
           </div>
+          <button class="delete-btn" onClick={() => handleDelete(review.id)} title="Delete review">🗑</button>
         </div>
       ))}
     </div>

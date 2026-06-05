@@ -16,7 +16,7 @@ function NewReleases() {
   return (
     <section style={{ "margin-bottom": "60px", "margin-top": "60px" }}>
       <div style={{ "margin-bottom": "20px" }}>
-        <h3 style={{ margin: 0, "font-size": "24px" }}>NEW RELEASES</h3>
+        <h3 style={{ margin: 30, "font-size": "24px" }}>NEW RELEASES</h3>
       </div>
 
       <figure style={{ display: "flex", "align-items": "center", gap: "15px", margin: 0 }}>
