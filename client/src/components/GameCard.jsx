@@ -8,7 +8,7 @@ function GameCard(props) {
         <img
           src={props.game.image}
           alt={props.game.title}
-          style={{ width: "100%", "aspect-ratio": "6/9", "border-radius": "10px", "display": "block", "object-fit": "cover" }}
+          style={{ width: "100%", "aspect-ratio": "6/9", "border-radius": "10px", "display": "block", "object-fit": "cover"}}
         />
       </div>
     </A>

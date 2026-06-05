@@ -1,7 +1,7 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { currentUser, setCurrentUser, setUsers, updateUser } from "./userStore";
-import { reviews, games } from "../data/mockData";
+import { games } from "../data/mockData";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
@@ -110,13 +110,28 @@ function AccountDetails() {
 }
 
 function MyReview() {
-  const userReviews = () => reviews
-    .filter(r => r.userId === currentUser()?.id)
-    .map(r => ({
-      ...r,
-      gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
-      gameImage: games.find(g => g.id === r.gameId)?.image || null,
-    }));
+  const [userReviews, setUserReviews] = createSignal([]);
+
+  onMount(async () => {
+    const response = await fetch(`http://localhost:8080/api/reviews/${currentUser()?.id}`);
+    if (response.ok) {
+      const data = await response.json();
+      setUserReviews(data.reviews.map(r => ({
+        ...r,
+        gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
+        gameImage: games.find(g => g.id === r.gameId)?.image || null,
+      })));
+    }
+  });
+
+  async function handleDelete(id) {
+    const response = await fetch(`http://localhost:8080/api/reviews/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      setUserReviews(prev => prev.filter(r => r.id !== id));
+    }
+  }
 
   return (
     <div class="content-panel">
@@ -182,7 +197,7 @@ export default function Profile() {
   return (
     <>
       <style>{`
-        /* ── Reset / Base ───────────────────────── */
+        /* Reset / Base */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
@@ -190,13 +205,13 @@ export default function Profile() {
           min-height: 100vh;
         }
 
-        /* ── Layout ─────────────────────────────── */
+        /* Layout */
         .profile-layout {
           display: flex;
           min-height: calc(100vh - 120px);
         }
 
-        /* ── Sidebar ─────────────────────────────── */
+        /* Sidebar */
         .sidebar {
           width: 310px;
           flex-shrink: 0;
@@ -236,7 +251,7 @@ export default function Profile() {
         }
         .sidebar-item.delete:hover { background: #f5b0b0; }
 
-        /* ── Content Panel ──────────────────────── */
+        /* Content Panel */
         .content-panel {
           flex: 1;
           background: #d4d4d4;
@@ -251,7 +266,7 @@ export default function Profile() {
           color: #111;
         }
 
-        /* ── Form Fields ────────────────────────── */
+        /* Form Fields */
         .field-label {
           display: block;
           font-size: 14px;
@@ -279,7 +294,7 @@ export default function Profile() {
 
         .field-input[readonly] { background: #f4f4f4; color: #555; }
 
-        /* ── Buttons ────────────────────────────── */
+        /* Buttons */
         .btn-dark {
           margin-top: 24px;
           padding: 13px 24px;
@@ -312,7 +327,7 @@ export default function Profile() {
           color: #555;
         }
 
-        /* ── Review Cards ───────────────────────── */
+        /* Review Cards */
         .review-card {
           display: flex;
           align-items: center;
@@ -369,7 +384,7 @@ export default function Profile() {
 
         .delete-btn:hover { background: #333; }
 
-        /* ── Delete Confirm Modal ───────────────── */
+        /* Delete Confirm Modal */
         .modal-overlay {
           position: fixed;
           inset: 0;

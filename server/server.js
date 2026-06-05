@@ -10,7 +10,6 @@ const app = express();
 const port = 8080
 
 
-
 // menggunakan middleware cors untuk konek dengan client
 app.use(cors());
 // menambahkan middleware ini agar bisa membaca JSON dari body request
@@ -66,13 +65,13 @@ app.post('/api/register', (req, res)=>{
 
     fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
         if(err){
-            console.error("Gagal menulis ke file");
+            console.error("Failed to write into file");
             users.pop();
-            return res.status(400).json({ message : "Terjadi kesalahan saat menyimpan data"})
+            return res.status(400).json({ message : "There was a problem saving the data"})
         }
 
         res.status(201).json({
-            message : "Registrasi berhasil",
+            message : "Registrasion successfull",
             user : newUser
         });
     })
@@ -89,11 +88,11 @@ app.put('/api/users/:id/password', (req, res) => {
   const userIndex = users.findIndex(u => u.id === id);
 
   if (userIndex === -1) {
-    return res.status(404).json({ message: "User tidak ditemukan" });
+    return res.status(404).json({ message: "User not found" });
   }
 
   if (users[userIndex].password !== oldPassword) {
-    return res.status(401).json({ message: "Password lama salah" });
+    return res.status(401).json({ message: "Old Password is incorrect" });
   }
 
   users[userIndex].password = newPassword;
@@ -102,9 +101,9 @@ app.put('/api/users/:id/password', (req, res) => {
   fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
     if (err) {
       users[userIndex].password = oldPassword; // rollback
-      return res.status(500).json({ message: "Gagal menyimpan data" });
+      return res.status(500).json({ message: "Failed to save data" });
     }
-    res.status(200).json({ message: "Password berhasil diubah" });
+    res.status(200).json({ message: "Password successfuly changed" });
   });
 });
 
@@ -114,7 +113,7 @@ app.delete('/api/users/:id', (req, res) => {
   const userIndex = users.findIndex(u => u.id === id);
 
   if (userIndex === -1) {
-    return res.status(404).json({ message: "User tidak ditemukan" });
+    return res.status(404).json({ message: "User not found" });
   }
 
   users.splice(userIndex, 1);
@@ -122,9 +121,9 @@ app.delete('/api/users/:id', (req, res) => {
   const filePath = path.join(__dirname, 'users.json');
   fs.writeFile(filePath, JSON.stringify(users, null, 2), (err) => {
     if (err) {
-      return res.status(500).json({ message: "Gagal menyimpan data" });
+      return res.status(500).json({ message: "Failed to delete data" });
     }
-    res.status(200).json({ message: "Akun berhasil dihapus" });
+    res.status(200).json({ message: "Akun successfully deleted" });
   });
 });
 
@@ -133,8 +132,51 @@ app.get('/api/users/:id', (req, res) => {
   const user = users.find(u => u.id === id);
 
   if (!user) {
-    return res.status(404).json({ message: "User tidak ditemukan" });
+    return res.status(404).json({ message: "User not found" });
   }
 
   res.status(200).json({ user });
 });
+
+const reviews = require('./reviews.json');
+
+app.get('/api/reviews/:userId', (req, res) => {
+  const userId = parseInt(req.params.userId);
+  const userReviews = reviews.filter(r => r.userId === userId);
+  res.status(200).json({ reviews: userReviews });
+});
+
+app.post('/api/reviews', (req, res) => {
+  const { gameId, userId, score, text } = req.body;
+
+  const newId = reviews.length === 0 ? 1 : reviews[reviews.length - 1].id + 1;
+  const newReview = { id: newId, gameId, userId, score, text };
+  reviews.push(newReview);
+
+  const filePath = path.join(__dirname, 'reviews.json');
+  fs.writeFile(filePath, JSON.stringify(reviews, null, 2), (err) => {
+    if (err) {
+      reviews.pop();
+      return res.status(500).json({ message: "Failed to save review" });
+    }
+    res.status(201).json({ message: "Review Successfully saved", review: newReview });
+  });
+});
+
+app.delete('/api/reviews/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const index = reviews.findIndex(r => r.id === id);
+
+  if (index === -1) return res.status(404).json({ message: "Review Not Found" });
+
+  const deleted = reviews.splice(index, 1);
+  const filePath = path.join(__dirname, 'reviews.json');
+  fs.writeFile(filePath, JSON.stringify(reviews, null, 2), (err) => {
+    if (err) {
+      reviews.splice(index, 0, deleted[0]);
+      return res.status(500).json({ message: "Failed to delete review" });
+    }
+    res.status(200).json({ message: "Review Successfuly Deleted" });
+  });
+});
+
