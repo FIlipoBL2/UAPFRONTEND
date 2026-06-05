@@ -6,22 +6,27 @@ const ReviewModal = (props) => {
 
     const [reviewText, setReviewText] = createSignal("")
 
-    function handleSubmit(){
-        
-        setUserStore("reviews", prev => {
-            const maxId = prev.length > 0 ? Math.max(...prev.map(u => u.id)) : 1
-            const newId = maxId + 1
-            const newReview = {
-                id : newId,
-                gameId : props.game.id,
-                userId : userStore.currentUser?.id,
-                score : props.score,
-                text : reviewText()
+    async function handleSubmit(){
+        try{
+            const response = await fetch(`http://localhost:8080/api/reviews`,{
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    gameId: props.game.id,
+                    userId: currentUser()?.id,
+                    score: props.score,
+                    text: reviewText(),
+                })
+            })
+
+            if (response.ok){
+                const data = await response.json();
+                setReview(prev => [...prev, data.review]);
+                setIsModalOpen(false);
             }
-            return [...prev, newReview]
-        })
-        setUserStore("isModalOpen", false)
-        
+        } catch (err){
+            console.error("Failed to connect to server");
+        }
     }
     return (
         <>
