@@ -1,5 +1,5 @@
 import "../styles/reviewModal.css"
-import { setIsModalOpen, currentUser, setReview } from "../pages/userStore";
+import { userStore, setUserStore } from "../pages/userStore";
 import { createSignal } from "solid-js";
 
 const ReviewModal = (props) => {
@@ -32,7 +32,7 @@ const ReviewModal = (props) => {
         <>
         <div class="modal-overlay">
         <div class="pop-up">
-            <button class="close-btn" onClick={() => setIsModalOpen(prev => !prev)}>X</button>
+            <button class="close-btn" onClick={() => setUserStore("isModalOpen", prev => !prev)}>X</button>
             <h1 class="modal-title">Write Your Review</h1>
             <div class="container">
                 <div class="game-info">

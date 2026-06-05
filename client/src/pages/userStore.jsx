@@ -1,18 +1,19 @@
-import { createSignal } from "solid-js";
+import { createStore } from "solid-js/store";
 import { users as mockUsers } from "../data/mockData";
-import { reviews } from "../data/mockData"
+import { reviews as mockReviews } from "../data/mockData"
 
-export const [users, setUsers] = createSignal(mockUsers);
-export const [currentUser, setCurrentUser] = createSignal(null);
-export const [searchQuery, setSearchQuery] = createSignal("");
+export const [userStore, setUserStore] = createStore({
+  users: mockUsers,
+  currentUser: null,
+  searchQuery: "",
+  isModalOpen: false,
+  reviews: mockReviews,
+});
 
 export function updateUser(updatedUser) {
-  setUsers(prev => prev.map(u => u.id === updatedUser.id ? updatedUser : u));
-  setCurrentUser(updatedUser);
+  setUserStore("users", (u) => u.id === updatedUser.id, updatedUser);
+  setUserStore("currentUser", updatedUser);
 }
-
-export const [IsModalOpen, setIsModalOpen] = createSignal(false);
-export const [review, setReview] = createSignal(reviews)
 
 // Saves user login info even when page is refreshed
 const token = localStorage.getItem("token");
@@ -21,7 +22,7 @@ if (token) {
     const response = await fetch(`http://localhost:8080/api/users/${token}`);
     if (response.ok) {
       const data = await response.json();
-      setCurrentUser(data.user);
+      setUserStore("currentUser", data.user);
     }
   } catch (err) {
     console.error("Failed to restore session");
