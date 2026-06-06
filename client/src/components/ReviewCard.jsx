@@ -1,12 +1,6 @@
-function ReviewCard(props) {
-  const { review } = props;
+import { getScoreColor, truncateText } from "../utils/helpers";
 
-  // Determine color based on score
-  const getScoreColor = (score) => {
-    if (score < 60) return "#ff4d4d"; // Red
-    if (score < 75) return "#ffcc00"; // Yellow
-    return "#00ce67ff"; // Green
-  };
+function ReviewCard(props) {
 
   return (
     <a href="#" style={{ "text-decoration": "none", color: "inherit" }}>
@@ -24,23 +18,23 @@ function ReviewCard(props) {
       }}>
         <div style={{ display: "flex", "justify-content": "space-between", "align-items": "center" }}>
           <span style={{
-            "background-color": getScoreColor(review.score),
-            color: review.score >= 60 && review.score < 75 ? "#000" : "#fff",
+            "background-color": getScoreColor(props.review.score),
+            color: props.review.score >= 60 && props.review.score < 75 ? "#000" : "#fff",
             padding: "5px 10px",
             "border-radius": "8px",
             "font-size": "18px",
             "font-weight": "bold"
           }}>
-            {review.score}
+            {props.review.score}
           </span>
           <div style={{ display: "flex", "flex-direction": "column", "align-items": "flex-end" }}>
-            <span style={{ "font-size": "13px", color: "#666", "text-align": "right", "line-height": "1.2", "font-weight": "bold" }}>{review.reviewer}</span>
-            <span style={{ "font-size": "11px", color: "#888", "text-align": "right", "margin-top": "2px", "font-style": "italic" }}>{review.gameTitle}</span>
+            <span style={{ "font-size": "13px", color: "#666", "text-align": "right", "line-height": "1.2", "font-weight": "bold" }}>{props.review.reviewer}</span>
+            <span style={{ "font-size": "11px", color: "#888", "text-align": "right", "margin-top": "2px", "font-style": "italic" }}>{props.review.gameTitle}</span>
           </div>
         </div>
         <p style={{ margin: 0, color: "#333", "font-size": "14px", "line-height": "1.5" }}>
           {/*Kalau text review diatas 100 character, 101-N char jadi ... */}
-          {review.text.length > 100 ? review.text.substring(0, 100) + "..." : review.text}
+          {truncateText(props.review.text, 100)}
         </p>
       </div>
     </a>

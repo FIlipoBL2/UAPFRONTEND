@@ -1,22 +1,12 @@
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
-import { loggedIn, setUsers, setLoggedIn } from "./userStore";
-
-// ─── Mock Data (replace with real API calls) ───────────────────────────────
-const MOCK_USER = {
-  username: "Vince Heinz",
-  email: "VinceHeinz@gmail.com",
-};
-
-const MOCK_REVIEWS = [
-  { id: 1, title: "Kripton 2", description: "Your Review Description" },
-  { id: 2, title: "Kiss Yourself", description: "Your Review Description" },
-];
+import { userStore, setUserStore, updateUser } from "./userStore";
+import { games } from "../data/mockData";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
 function AccountDetails() {
-  const [user] = createSignal(MOCK_USER);
+  const user = () => userStore.currentUser ?? { username: "", email: "", password: "" };
   const [showPasswordFields, setShowPasswordFields] = createSignal(false);
   const [oldPassword, setOldPassword] = createSignal("");
   const [newPassword, setNewPassword] = createSignal("");
@@ -28,21 +18,41 @@ function AccountDetails() {
     setMessage("");
   }
 
-  function handleSubmitNewPassword() {
+  async function handleSubmitNewPassword() {
     if (!oldPassword() || !newPassword() || !retypePassword()) {
       setMessage("Please fill in all password fields.");
       return;
     }
+
+    // Remove Old password check, cause now its checked at server.js
+
     if (newPassword() !== retypePassword()) {
       setMessage("New passwords do not match.");
       return;
     }
-    // TODO: call your API here
-    setMessage("Password updated successfully!");
-    setShowPasswordFields(false);
-    setOldPassword("");
-    setNewPassword("");
-    setRetypePassword("");
+
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${userStore.currentUser.id}/password`,{
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+          oldPassword: oldPassword(),
+          newPassword: newPassword(),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok){
+        updateUser({...userStore.currentUser, password: newPassword()});
+        setMessage("Password updated successfully!");
+        setShowPasswordFields(false);
+        setOldPassword("");
+        setNewPassword("");
+        setRetypePassword("");
+      }
+    } catch (err){
+      setMessage("Failed to connect to server")
+    }
   }
 
   return (
@@ -100,32 +110,48 @@ function AccountDetails() {
 }
 
 function MyReview() {
-  const [reviews, setReviews] = createSignal(MOCK_REVIEWS);
+  const [userReviews, setUserReviews] = createSignal([]);
 
-  function handleDelete(id) {
-    // TODO: call your API to delete review
-    setReviews((prev) => prev.filter((r) => r.id !== id));
+  onMount(async () => {
+    const response = await fetch(`http://localhost:8080/api/reviews/${userStore.currentUser?.id}`);
+    if (response.ok) {
+      const data = await response.json();
+      setUserReviews(data.reviews.map(r => ({
+        ...r,
+        gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
+        gameImage: games.find(g => g.id === r.gameId)?.image || null,
+      })));
+    }
+  });
+
+  async function handleDelete(id) {
+    const response = await fetch(`http://localhost:8080/api/reviews/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      setUserReviews(prev => prev.filter(r => r.id !== id));
+    }
   }
 
   return (
     <div class="content-panel">
       <h2 class="panel-title">My Review</h2>
-      {reviews().map((review) => (
+      {userReviews().length === 0 && (
+        <p>You haven't written any reviews yet.</p>
+      )}
+      {userReviews().map((review) => (
         <div class="review-card">
           <div class="review-thumb">
-            <span>{review.title}</span>
+            {review.gameImage
+              ? <img src={review.gameImage} style={{ width: "100%", height: "100%", "object-fit": "cover", "border-radius": "6px" }} />
+              : <span>{review.gameTitle}</span>
+            }
           </div>
           <div class="review-info">
-            <h3 class="review-title">{review.title}</h3>
-            <p class="review-desc">{review.description}</p>
+            <h3 class="review-title">{review.gameTitle}</h3>
+            <p class="review-desc">{review.text}</p>
           </div>
-          <button
-            class="delete-btn"
-            onClick={() => handleDelete(review.id)}
-            title="Delete review"
-          >
-            🗑
-          </button>
+          <button class="delete-btn" onClick={() => handleDelete(review.id)} title="Delete review">🗑</button>
         </div>
       ))}
     </div>
@@ -142,90 +168,51 @@ export default function Profile() {
 
   function handleLogout() {
     // TODO: clear session/token
-    setLoggedIn(false);
+    localStorage.removeItem("token");
+    setUserStore("currentUser", null);
     navigate("/");
   }
 
-  function handleDeleteAccount() {
-    // TODO: call your API to delete account
-    setUsers(prev => prev.filter(u => u.email !== MOCK_USER.email));
-    setLoggedIn(false);
-    navigate("/");
+  async function handleDeleteAccount() {
+    try{
+      const response = await fetch(`http://localhost:8080/api/users/${userStore.currentUser.id}`,{
+        method: "DELETE",
+        headers: {"Content-Type": "application/json"},
+      })
+
+      if (response.ok){
+        setUserStore("users", (prev) => prev.filter(u => u.id !== userStore.currentUser.id));
+        setUserStore("currentUser", null);
+        localStorage.removeItem("token");
+        navigate("/");
+      } else{
+        const data = await response.json();
+        console.error(data.message);
+      }
+    }catch(err){
+      console.log("Failed to connect to server")
+    }
 
   }
 
   return (
     <>
       <style>{`
-        /* ── Reset / Base ───────────────────────── */
+        /* Reset / Base */
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
           background: #d4d4d4;
-          font-family: 'Segoe UI', sans-serif;
           min-height: 100vh;
         }
 
-        /* ── Navbar ─────────────────────────────── */
-        .navbar {
-          background: #d4d4d4;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: 0 24px;
-          height: 120px;
-          border-bottom: 1px solid #bbb;
-        }
-
-        .navbar-logo {
-          font-size: 28px;
-          font-weight: 700;
-          color: #222;
-          letter-spacing: -1px;
-        }
-
-        .search-bar {
-          display: flex;
-          align-items: center;
-          background: #fff;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          padding: 8px 14px;
-          width: 380px;
-          gap: 8px;
-        }
-
-        .search-bar input {
-          border: none;
-          outline: none;
-          font-size: 15px;
-          color: #555;
-          width: 100%;
-          background: transparent;
-        }
-
-        .search-bar span { color: #888; font-size: 18px; }
-
-        .navbar-avatar {
-          width: 64px;
-          height: 64px;
-          border-radius: 50%;
-          background: #c0392b;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #fff;
-          font-weight: 700;
-          font-size: 22px;
-        }
-
-        /* ── Layout ─────────────────────────────── */
+        /* Layout */
         .profile-layout {
           display: flex;
           min-height: calc(100vh - 120px);
         }
 
-        /* ── Sidebar ─────────────────────────────── */
+        /* Sidebar */
         .sidebar {
           width: 310px;
           flex-shrink: 0;
@@ -265,7 +252,7 @@ export default function Profile() {
         }
         .sidebar-item.delete:hover { background: #f5b0b0; }
 
-        /* ── Content Panel ──────────────────────── */
+        /* Content Panel */
         .content-panel {
           flex: 1;
           background: #d4d4d4;
@@ -280,7 +267,7 @@ export default function Profile() {
           color: #111;
         }
 
-        /* ── Form Fields ────────────────────────── */
+        /* Form Fields */
         .field-label {
           display: block;
           font-size: 14px;
@@ -308,7 +295,7 @@ export default function Profile() {
 
         .field-input[readonly] { background: #f4f4f4; color: #555; }
 
-        /* ── Buttons ────────────────────────────── */
+        /* Buttons */
         .btn-dark {
           margin-top: 24px;
           padding: 13px 24px;
@@ -341,7 +328,7 @@ export default function Profile() {
           color: #555;
         }
 
-        /* ── Review Cards ───────────────────────── */
+        /* Review Cards */
         .review-card {
           display: flex;
           align-items: center;
@@ -398,7 +385,7 @@ export default function Profile() {
 
         .delete-btn:hover { background: #333; }
 
-        /* ── Delete Confirm Modal ───────────────── */
+        /* Delete Confirm Modal */
         .modal-overlay {
           position: fixed;
           inset: 0;
@@ -456,19 +443,6 @@ export default function Profile() {
 
         .btn-danger:hover { background: #c0392b; }
       `}</style>
-
-      {/* ── Navbar ── */}
-      <nav class="navbar">
-        <div class="navbar-logo">
-          {/* Replace with your actual logo image */}
-          <span style="font-family: monospace; font-size: 32px;">⚙</span>
-        </div>
-        <div class="search-bar">
-          <input type="text" placeholder="Search for games..." />
-          <span>🔍</span>
-        </div>
-        <div class="navbar-avatar">VH</div>
-      </nav>
 
       {/* ── Body ── */}
       <div class="profile-layout">

@@ -14,9 +14,9 @@ function NewReleases() {
   };
 
   return (
-    <section style={{ "margin-bottom": "60px" }}>
-      <div style={{ display: "flex", "align-items": "baseline", "margin-bottom": "20px" }}>
-        <h3 style={{ margin: 0, "font-size": "24px" }}>NEW RELEASES</h3>
+    <section style={{ "margin-bottom": "60px", "margin-top": "60px" }}>
+      <div style={{ "margin-bottom": "20px" }}>
+        <h3 style={{ margin: 30, "font-size": "24px" }}>NEW RELEASES</h3>
       </div>
 
       <figure style={{ display: "flex", "align-items": "center", gap: "15px", margin: 0 }}>
@@ -24,7 +24,9 @@ function NewReleases() {
 
         <div ref={gameRowRef} class="game-row" style={{ display: "flex", gap: "20px", overflow: "hidden", flex: 1, "padding-bottom": "10px" }}>
           <For each={newReleases}>
-            {(game) => <GameCard game={game} />}
+            {(game) => (
+              <GameCard game={game} />
+            )}
           </For>
         </div>
 
