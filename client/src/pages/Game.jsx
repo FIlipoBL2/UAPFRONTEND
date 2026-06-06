@@ -5,7 +5,6 @@ import { createSignal, Show, For } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
 import { userStore, setUserStore } from "./userStore";
 
-
 const Game = () => {
     const params = useParams();
     const selectedGames = games.find(game => game.id === Number(params.id));

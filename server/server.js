@@ -77,10 +77,6 @@ app.post('/api/register', (req, res)=>{
     })
 })
 
-app.listen(port, () =>{
-    console.log("Listening...")
-})
-
 app.put('/api/users/:id/password', (req, res) => {
   const id = parseInt(req.params.id);
   const { oldPassword, newPassword } = req.body;
@@ -138,14 +134,21 @@ app.get('/api/users/:id', (req, res) => {
   res.status(200).json({ user });
 });
 
+// GETS REVIEWS
 const reviews = require('./reviews.json');
-
+// FOR GAME PAGE
+app.get('/api/reviews', (req, res) => {
+  res.status(200).json({ reviews });
+});
+// FOR PROFILE
 app.get('/api/reviews/:userId', (req, res) => {
   const userId = parseInt(req.params.userId);
   const userReviews = reviews.filter(r => r.userId === userId);
   res.status(200).json({ reviews: userReviews });
 });
+//======================
 
+// POST REVIEWS
 app.post('/api/reviews', (req, res) => {
   const { gameId, userId, score, text } = req.body;
 
@@ -162,7 +165,9 @@ app.post('/api/reviews', (req, res) => {
     res.status(201).json({ message: "Review Successfully saved", review: newReview });
   });
 });
+//======================
 
+// DELETE REVIEWS
 app.delete('/api/reviews/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const index = reviews.findIndex(r => r.id === id);
@@ -179,4 +184,9 @@ app.delete('/api/reviews/:id', (req, res) => {
     res.status(200).json({ message: "Review Successfuly Deleted" });
   });
 });
+//======================
 
+// KEEP AT BOTTOM
+app.listen(port, () =>{
+    console.log("Listening...")
+})
