@@ -13,7 +13,7 @@ const ReviewModal = (props) => {
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({
                     gameId: props.game.id,
-                    userId: currentUser()?.id,
+                    userId: userStore.currentUser.id,
                     score: props.score,
                     text: reviewText(),
                 })
@@ -21,8 +21,11 @@ const ReviewModal = (props) => {
 
             if (response.ok){
                 const data = await response.json();
-                setReview(prev => [...prev, data.review]);
-                setIsModalOpen(false);
+
+                setUserStore("reviews", (prev) => [...prev, data.review])
+                setUserStore("isModalOpen", false)
+                setReviewText("")
+                
             }
         } catch (err){
             console.error("Failed to connect to server");

@@ -12,6 +12,10 @@ const Game = () => {
     const [slider, setSlider] = createSignal(50);
     const navigate = useNavigate();
 
+    const filteredReviews  = () => {
+        return userStore.reviews.filter(review => review.gameId === selectedGames.id)
+    };
+
     const getScoreColor = (score) => {
         if (score < 60) return "#ff4d4d"; // Red
         if (score < 75) return "#ffcc00"; // Yellow
@@ -21,14 +25,14 @@ const Game = () => {
     const computeAvg = () =>{
         let totalScore = 0;
         let reviewCount = 0;
-        userStore.reviews.forEach((val)=>{
+        filteredReviews().forEach((val)=>{
             if(val.gameId === selectedGames.id){
                 totalScore += Number(val.score);
                 reviewCount++;
             }
         })
-        return reviewCount == 0 ? 0 : Math.round(totalScore / reviewCount)
-    }
+        return reviewCount > 0 ? Math.round(totalScore/reviewCount) : 0;
+    } 
 
     const deviceNames = selectedGames.deviceIds.map((deviceID) => {
         const device = devices.find(device => device.id === deviceID);
@@ -37,15 +41,15 @@ const Game = () => {
 
     const[currentPage, setCurrentPage] = createSignal(1);
     const numPerPage = 3;
-    const totalPages = Math.ceil(reviews.length / numPerPage);
+    const totalPages = () => Math.ceil(filteredReviews().length / numPerPage);
 
-    const currReviews = () => {
+    const currReviews    = () => {
         const startIndex = (currentPage() - 1) * numPerPage;
-        return reviews.slice(startIndex, startIndex + numPerPage);
+        return filteredReviews().slice(startIndex, startIndex + numPerPage);
     };
 
     const nextPage = () => {
-        if (currentPage() < totalPages) {
+        if (currentPage() < totalPages()) {
             setCurrentPage(currentPage() + 1);
         }
     };
@@ -55,6 +59,11 @@ const Game = () => {
             setCurrentPage(currentPage() - 1);
         }
     };
+
+    const getUsername = (userId) =>{
+        const user = userStore.users.find(u => u.id === userId);
+        return user ? user.username : "Unkwon User";
+    }   
 
     //harus dijadikan arrow function untuk menjadi reactive
     const avg = () => computeAvg();
@@ -109,35 +118,40 @@ const Game = () => {
                 </div>
 
                 <div class="reviewsContainer">
-                    <div class="reviewHeader">
-                        Search Reviews
-                    </div>
+                    <Show when={totalPages() === 0}>
+                        <div style={{"display" : "flex", "justify-content" : "center", "grid-column": "1 / -1"}}><h2>No Reviews Yet</h2></div>
+                    </Show>
+                    <Show when={totalPages() > 0}>
+                        <div class="reviewHeader">
+                            Search Reviews
+                        </div>
 
-                    <For each={currReviews()}>
-                        {(review) => (
-                            <div class="review">
-                                <div class="scoreBox" style={{ "background-color": getScoreColor(review.score)}}>
-                                    <p>{review.score}</p>
+                        <For each={currReviews()}>
+                            {(review) => (
+                                <div class="review">
+                                    <div class="scoreBox" style={{ "background-color": getScoreColor(review.score)}}>
+                                        <p>{review.score}</p>
+                                    </div>
+
+                                    <h3>{getUsername(review.userId)}</h3>
+                                    <p>{review.text}</p>
+                                    {/* <button class="readMoreBtn">Read More</button> */}
                                 </div>
-
-                                <h3>{review.userId}</h3>
-                                <p>{review.text}</p>
-                                {/* <button class="readMoreBtn">Read More</button> */}
-                            </div>
-                        )}
-                    </For>
-
-                    <div class="pagination">
-                        <button onClick={prevPage} disabled={currentPage() === 1}>Previous</button>
-
-                        <For each={Array.from({ length: totalPages }, (_, i) => i + 1)}>
-                            {(page) => (
-                                <button onClick={() => setCurrentPage(page)}>{page}</button>
                             )}
                         </For>
 
-                        <button onClick={nextPage} disabled={currentPage() === totalPages}>Next</button>
-                    </div>
+                        <div class="pagination">
+                            <button onClick={prevPage} disabled={currentPage() === 1}>Previous</button>
+
+                            <For each={Array.from({ length: totalPages() }, (_, i) => i + 1)}>
+                                {(page) => (
+                                    <button onClick={() => setCurrentPage(page)}>{page}</button>
+                                )}
+                            </For>
+
+                            <button onClick={nextPage} disabled={currentPage() === totalPages()}>Next</button>
+                        </div>
+                    </Show>
                 </div>
             </div>
         </div>
