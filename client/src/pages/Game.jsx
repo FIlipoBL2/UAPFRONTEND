@@ -2,6 +2,7 @@ import { useParams, useNavigate } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal, Show, For } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
+import ReviewCard from "../components/ReviewCard";
 import { userStore, setUserStore } from "./userStore";
 import { getPoster } from "../utils/imageHelper";
 
@@ -27,10 +28,8 @@ const Game = () => {
         let totalScore = 0;
         let reviewCount = 0;
         filteredReviews().forEach((val) => {
-            if (val.gameId === selectedGames()?.id) {
                 totalScore += Number(val.score);
                 reviewCount++;
-            }
         })
         return reviewCount > 0 ? Math.round(totalScore / reviewCount) : 0;
     }
@@ -133,15 +132,13 @@ const Game = () => {
 
                         <For each={currReviews()}>
                             {(review) => (
-                                <div class="review">
-                                    <div class="scoreBox" style={{ "background-color": getScoreColor(review.score) }}>
-                                        <p>{review.score}</p>
-                                    </div>
-
-                                    <h3>{getUsername(review.userId)}</h3>
-                                    <p>{review.text}</p>
-                                    {/* <button class="readMoreBtn">Read More</button> */}
-                                </div>
+                                <ReviewCard review={{
+                                    score: review.score,
+                                    text: review.text,
+                                    reviewer: getUsername(review.userId),
+                                    gameTitle: selectedGames()?.title,
+                                    gameId: review.gameId
+                                }} />
                             )}
                         </For>
 

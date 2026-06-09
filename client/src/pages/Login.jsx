@@ -9,7 +9,7 @@ function Login() {
   const [password, setPassword] = createSignal("");
   const navigate = useNavigate();
   const [error, setError] = createSignal("");
-  console.log(userStore.users)
+  
   async function handleLogin() {
     try{
       const response = await fetch("http://localhost:8080/api/login", {
