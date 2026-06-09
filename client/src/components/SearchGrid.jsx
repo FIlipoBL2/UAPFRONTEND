@@ -1,15 +1,15 @@
 import { For } from "solid-js";
 import GameCard from "./GameCard";
-import { devices, reviews } from "../data/mockData";
+import { userStore } from "../pages/userStore";
 
 function SearchGrid(props){
 
-    const deviceMap = devices.reduce((acc, device) => {
+    const deviceMap = () => userStore.devices.reduce((acc, device) => {
         acc[device.id] = device.name;
         return acc;
     },{});
 
-    const scoreMap = reviews.reduce((acc, review) => {
+    const scoreMap = () => userStore.reviews.reduce((acc, review) => {
         if(!acc[review.gameId]){
             acc[review.gameId] = {sum: 0, count: 0};
         }
@@ -19,7 +19,7 @@ function SearchGrid(props){
     },{});
 
     const avg = (gameId) => {
-        const data = scoreMap[gameId];
+        const data = scoreMap()[gameId];
         return data ? Math.round(data.sum / data.count) : null;
     };
 
@@ -83,7 +83,7 @@ function SearchGrid(props){
                             </h2>
 
                             <p style={{margin:0, color:"#000000", "font-size": "14px"}}>
-                                Supported On: {game.deviceIds.map(id => deviceMap[id]).join(", ")}
+                                Supported On: {game.deviceIds.map(id => deviceMap()[id]).join(", ")}
                                 <br />
                                 Release On: {game.releaseDate}
                                 <br />

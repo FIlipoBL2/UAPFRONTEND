@@ -46,5 +46,11 @@
     "username": "ScreenHypeRemake",
     "email": "hype@test.com",
     "password": "password1234"
+  },
+  {
+    "id": 110,
+    "username": "1",
+    "email": "1",
+    "password": "1"
   }
 ]

@@ -1,7 +1,7 @@
 import { createSignal, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { userStore, setUserStore, updateUser } from "./userStore";
-import { games } from "../data/mockData";
+import { getPoster } from "../utils/imageHelper";
 
 // ─── Sub-pages ─────────────────────────────────────────────────────────────
 
@@ -116,11 +116,14 @@ function MyReview() {
     const response = await fetch(`http://localhost:8080/api/reviews/${userStore.currentUser?.id}`);
     if (response.ok) {
       const data = await response.json();
-      setUserReviews(data.reviews.map(r => ({
-        ...r,
-        gameTitle: games.find(g => g.id === r.gameId)?.title || "Unknown Game",
-        gameImage: games.find(g => g.id === r.gameId)?.image || null,
-      })));
+      setUserReviews(data.reviews.map(r => {
+        const game = userStore.games.find(g => g.id === r.gameId);
+        return {
+          ...r,
+          gameTitle: game?.title || "Unknown Game",
+          gameImage: game?.image ? getPoster(game.image) : null,
+        }
+      }));
     }
   });
 

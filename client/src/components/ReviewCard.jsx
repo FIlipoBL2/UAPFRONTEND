@@ -1,9 +1,10 @@
 import { getScoreColor, truncateText } from "../utils/helpers";
+import { A } from "@solidjs/router";
 
 function ReviewCard(props) {
 
   return (
-    <a href="#" style={{ "text-decoration": "none", color: "inherit" }}>
+    <A href={`/details/${props.review.gameId}`} style={{ "text-decoration": "none" }}>
       <div class="review-card" style={{
         "background-color": "#d9d9d9",
         padding: "20px",
@@ -37,7 +38,7 @@ function ReviewCard(props) {
           {truncateText(props.review.text, 100)}
         </p>
       </div>
-    </a>
+    </A >
   );
 }
 

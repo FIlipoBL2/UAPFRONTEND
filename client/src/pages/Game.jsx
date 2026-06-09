@@ -1,18 +1,20 @@
-import { games, devices, reviews } from "../data/mockData";
 import { useParams, useNavigate } from "@solidjs/router";
 import "../styles/game.css";
 import { createSignal, Show, For } from "solid-js";
 import ReviewModal from "../components/ReviewModal";
 import { userStore, setUserStore } from "./userStore";
+import { getPoster } from "../utils/imageHelper";
 
 const Game = () => {
     const params = useParams();
-    const selectedGames = games.find(game => game.id === Number(params.id));
+    const selectedGames = () => userStore.games.find(game => game.id === Number(params.id));
     const [slider, setSlider] = createSignal(50);
     const navigate = useNavigate();
 
-    const filteredReviews  = () => {
-        return userStore.reviews.filter(review => review.gameId === selectedGames.id)
+    const filteredReviews = () => {
+        const game = selectedGames();
+        if (!game) return [];
+        return userStore.reviews.filter(review => review.gameId === game.id)
     };
 
     const getScoreColor = (score) => {
@@ -21,28 +23,32 @@ const Game = () => {
         return "#00ce67ff"; // Green
     };
 
-    const computeAvg = () =>{
+    const computeAvg = () => {
         let totalScore = 0;
         let reviewCount = 0;
-        filteredReviews().forEach((val)=>{
-            if(val.gameId === selectedGames.id){
+        filteredReviews().forEach((val) => {
+            if (val.gameId === selectedGames()?.id) {
                 totalScore += Number(val.score);
                 reviewCount++;
             }
         })
-        return reviewCount > 0 ? Math.round(totalScore/reviewCount) : 0;
-    } 
+        return reviewCount > 0 ? Math.round(totalScore / reviewCount) : 0;
+    }
 
-    const deviceNames = selectedGames.deviceIds.map((deviceID) => {
-        const device = devices.find(device => device.id === deviceID);
-        return device ? device.name : "Unknown Device";
-    }).join(" / ");
+    const deviceNames = () => {
+        const game = selectedGames();
+        if (!game) return "Unknown Device";
+        return game.deviceIds.map((deviceID) => {
+            const device = userStore.devices.find(device => device.id === deviceID);
+            return device ? device.name : "Unknown Device";
+        }).join(" / ");
+    };
 
-    const[currentPage, setCurrentPage] = createSignal(1);
+    const [currentPage, setCurrentPage] = createSignal(1);
     const numPerPage = 3;
     const totalPages = () => Math.ceil(filteredReviews().length / numPerPage);
 
-    const currReviews    = () => {
+    const currReviews = () => {
         const startIndex = (currentPage() - 1) * numPerPage;
         return filteredReviews().slice(startIndex, startIndex + numPerPage);
     };
@@ -52,17 +58,17 @@ const Game = () => {
             setCurrentPage(currentPage() + 1);
         }
     };
-    
+
     const prevPage = () => {
         if (currentPage() > 1) {
             setCurrentPage(currentPage() - 1);
         }
     };
 
-    const getUsername = (userId) =>{
+    const getUsername = (userId) => {
         const user = userStore.users.find(u => u.id === userId);
-        return user ? user.username : "Unkwon User";
-    }   
+        return user ? user.username : "Unknown User";
+    }
 
     //harus dijadikan arrow function untuk menjadi reactive
     const avg = () => computeAvg();
@@ -70,27 +76,27 @@ const Game = () => {
         <div class="background">
             <div class="mainContainer">
                 <div class="gameImageContainer">
-                    <img src={selectedGames?.image} alt="Game Image" />
+                    <img src={selectedGames()?.image ? getPoster(selectedGames()?.image) : ""} alt="Game Image" />
                 </div>
 
                 <div class="gameInfoContainer">
 
                     <h1>
-                        {selectedGames?.title}
+                        {selectedGames()?.title}
                     </h1>
 
                     <p class="platform">
-                        {deviceNames}
+                        {deviceNames()}
                     </p>
 
                     <div class="releaseDateContainer">
                         <h2>Release Date</h2>
-                        <h2>{selectedGames?.releaseDate}</h2>
+                        <h2>{selectedGames()?.releaseDate}</h2>
                     </div>
 
                     <div class="scoreContainer">
                         <h2>Average Score</h2>
-                        <div class="scoreBox" style={{ "background-color": getScoreColor(avg())}}>
+                        <div class="scoreBox" style={{ "background-color": getScoreColor(avg()) }}>
                             <p>{avg()}</p>
                         </div>
                     </div>
@@ -104,21 +110,21 @@ const Game = () => {
                     </div>
                     <div class="reviewBtnContainer">
                         <button onClick={() => {
-                            if (!userStore.currentUser){
+                            if (!userStore.currentUser) {
                                 navigate("/login");
-                            } else{
+                            } else {
                                 setUserStore("isModalOpen", prev => !prev);
                             }
                         }}>Add my Review</button>
                     </div>
                     <Show when={userStore.isModalOpen}>
-                        <ReviewModal game={selectedGames} setScore={setSlider} score={slider()}/>
+                        <ReviewModal game={selectedGames()} setScore={setSlider} score={slider()} />
                     </Show>
                 </div>
 
                 <div class="reviewsContainer">
                     <Show when={totalPages() === 0}>
-                        <div style={{"display" : "flex", "justify-content" : "center", "grid-column": "1 / -1"}}><h2>No Reviews Yet</h2></div>
+                        <div style={{ "display": "flex", "justify-content": "center", "grid-column": "1 / -1" }}><h2>No Reviews Yet</h2></div>
                     </Show>
                     <Show when={totalPages() > 0}>
                         <div class="reviewHeader">
@@ -128,7 +134,7 @@ const Game = () => {
                         <For each={currReviews()}>
                             {(review) => (
                                 <div class="review">
-                                    <div class="scoreBox" style={{ "background-color": getScoreColor(review.score)}}>
+                                    <div class="scoreBox" style={{ "background-color": getScoreColor(review.score) }}>
                                         <p>{review.score}</p>
                                     </div>
 

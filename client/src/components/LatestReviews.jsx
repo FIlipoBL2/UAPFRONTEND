@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { latestReviews } from "../data/mockData";
+import { userStore } from "../pages/userStore";
 import ReviewCard from "./ReviewCard";
 
 function LatestReviews() {
@@ -29,10 +29,10 @@ function LatestReviews() {
 
       <div class="marquee-wrapper">
         <div class="marquee-content">
-          <For each={latestReviews}>
+          <For each={userStore.latestReviews}>
             {(review) => <ReviewCard review={review} />}
           </For>
-          <For each={latestReviews}>
+          <For each={userStore.latestReviews}>
             {(review) => <ReviewCard review={review} />}
           </For>
         </div>
