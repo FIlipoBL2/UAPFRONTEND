@@ -125,6 +125,10 @@ app.delete('/api/users/:id', (req, res) => {
   });
 });
 
+app.get('/api/users', (req, res) => {
+  res.status(200).json({ users });
+});
+
 app.get('/api/users/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const user = users.find(u => u.id === id);
@@ -142,8 +146,7 @@ const reviews = require('./reviews.json');
 app.get('/api/reviews', (req, res) => {
   res.status(200).json({ reviews });
 });
-// IMPORTANT: The '/api/reviews/latest' route MUST be defined before '/api/reviews/:userId'
-// Otherwise, Express will treat "latest" as the :userId parameter, parsing it as NaN and returning []
+
 app.get('/api/reviews/latest', (req, res) => {
   const latestReviews = reviews.slice(-10).reverse().map(review => {
     const game = games.find(g => g.id === review.gameId);
@@ -163,7 +166,6 @@ app.get('/api/reviews/:userId', (req, res) => {
   const userReviews = reviews.filter(r => r.userId === userId);
   res.status(200).json({ reviews: userReviews });
 });
-//======================
 
 // POST REVIEWS
 app.post('/api/reviews', (req, res) => {
@@ -182,7 +184,6 @@ app.post('/api/reviews', (req, res) => {
     res.status(201).json({ message: "Review Successfully saved", review: newReview });
   });
 });
-//======================
 
 // DELETE REVIEWS
 app.delete('/api/reviews/:id', (req, res) => {
@@ -201,7 +202,6 @@ app.delete('/api/reviews/:id', (req, res) => {
     res.status(200).json({ message: "Review Successfuly Deleted" });
   });
 });
-//======================
 
 // GETS GAMES AND DEVICES
 app.get('/api/games', (req, res) => {
@@ -218,7 +218,6 @@ app.get('/api/games/new-releases', (req, res) => {
 });
 
 
-//======================
 
 // KEEP AT BOTTOM
 app.listen(port, () =>{

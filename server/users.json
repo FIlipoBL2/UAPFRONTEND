@@ -12,12 +12,6 @@
     "password": "password123"
   },
   {
-    "id": 104,
-    "username": "John Doe",
-    "email": "john@test.com",
-    "password": "password123"
-  },
-  {
     "id": 105,
     "username": "Jane Doe",
     "email": "jane@test.com",
@@ -34,12 +28,6 @@
     "username": "Wombat",
     "email": "wombat@test.com",
     "password": "password123"
-  },
-  {
-    "id": 108,
-    "username": "bryan",
-    "email": "bryan@test.com",
-    "password": "1234"
   },
   {
     "id": 109,
