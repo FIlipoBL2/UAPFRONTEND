@@ -1,8 +1,11 @@
 import { createStore } from "solid-js/store";
-import { users as mockUsers } from "../data/mockData";
 
 export const [userStore, setUserStore] = createStore({
-  users: mockUsers,
+  users: [],
+  games: [],
+  devices: [],
+  newReleases: [],
+  latestReviews: [],
   currentUser: null,
   searchQuery: "",
   isModalOpen: false,
@@ -12,6 +15,23 @@ export const [userStore, setUserStore] = createStore({
 export function updateUser(updatedUser) {
   setUserStore("users", (u) => u.id === updatedUser.id, updatedUser);
   setUserStore("currentUser", updatedUser);
+}
+
+// Fetch all initial data
+try {
+  const [gamesRes, devicesRes, newReleasesRes, latestReviewsRes] = await Promise.all([
+    fetch('http://localhost:8080/api/games'),
+    fetch('http://localhost:8080/api/devices'),
+    fetch('http://localhost:8080/api/games/new-releases'),
+    fetch('http://localhost:8080/api/reviews/latest')
+  ]);
+
+  if (gamesRes.ok) setUserStore("games", (await gamesRes.json()).games);
+  if (devicesRes.ok) setUserStore("devices", (await devicesRes.json()).devices);
+  if (newReleasesRes.ok) setUserStore("newReleases", (await newReleasesRes.json()).games);
+  if (latestReviewsRes.ok) setUserStore("latestReviews", (await latestReviewsRes.json()).reviews);
+} catch (err) {
+  console.error("Failed to fetch initial data", err);
 }
 
 // Saves user login info even when page is refreshed
@@ -27,15 +47,15 @@ if (token) {
   } catch (err) {
     console.error("Failed to restore session");
   }
+}
 
-  //fetch reviews from server
-  try {
-    const reviewResponse = await fetch('http://localhost:8080/api/reviews');
-    if (reviewResponse.ok) {
-      const reviewData = await reviewResponse.json();
-      setUserStore("reviews", reviewData.reviews);
-    }
-  } catch (err) {
-    console.error("Failed to fetch reviews");
+//fetch reviews from server
+try {
+  const reviewResponse = await fetch('http://localhost:8080/api/reviews');
+  if (reviewResponse.ok) {
+    const reviewData = await reviewResponse.json();
+    setUserStore("reviews", reviewData.reviews);
   }
+} catch (err) {
+  console.error("Failed to fetch reviews");
 }

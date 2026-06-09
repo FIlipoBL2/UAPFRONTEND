@@ -1,5 +1,4 @@
 import { createEffect, createSignal, For, Match, Switch } from "solid-js";
-import { games } from "../data/mockData";
 import SearchGrid from "../components/SearchGrid";
 import { userStore } from "./userStore";
 
@@ -61,9 +60,9 @@ function Search() {
     function filteredItems() {
         const query = userStore.searchQuery.toLowerCase().trim();
         if (query.length == 0) {
-            return games
+            return userStore.games
         }
-        return games.filter(game => game.title.toLowerCase().includes(query))
+        return userStore.games.filter(game => game.title.toLowerCase().includes(query))
     }
 
     return (

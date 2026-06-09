@@ -1,5 +1,5 @@
 import { For } from "solid-js";
-import { newReleases } from "../data/mockData";
+import { userStore } from "../pages/userStore";
 import GameCard from "./GameCard";
 
 function NewReleases() {
@@ -23,7 +23,7 @@ function NewReleases() {
         <button onClick={scrollLeft} style={{ padding: "10px 15px", cursor: "pointer", "background-color": "#2f384d", color: "white", border: "none", "border-radius": "8px" }}>{"<"}</button>
 
         <div ref={gameRowRef} class="game-row" style={{ display: "flex", gap: "20px", overflow: "hidden", flex: 1, "padding-bottom": "10px" }}>
-          <For each={newReleases}>
+          <For each={userStore.newReleases}>
             {(game) => (
               <GameCard game={game} />
             )}

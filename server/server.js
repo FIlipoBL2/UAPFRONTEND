@@ -1,4 +1,6 @@
 const users = require('./users.json')
+const games = require('./games.json')
+const devices = require('./devices.json')
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -140,6 +142,21 @@ const reviews = require('./reviews.json');
 app.get('/api/reviews', (req, res) => {
   res.status(200).json({ reviews });
 });
+// IMPORTANT: The '/api/reviews/latest' route MUST be defined before '/api/reviews/:userId'
+// Otherwise, Express will treat "latest" as the :userId parameter, parsing it as NaN and returning []
+app.get('/api/reviews/latest', (req, res) => {
+  const latestReviews = reviews.slice(-10).reverse().map(review => {
+    const game = games.find(g => g.id === review.gameId);
+    const user = users.find(u => u.id === review.userId);
+    return {
+      ...review,
+      gameTitle: game ? game.title : "Unknown Game",
+      reviewer: user ? user.username : "Unknown User"
+    };
+  });
+  res.status(200).json({ reviews: latestReviews });
+});
+
 // FOR PROFILE
 app.get('/api/reviews/:userId', (req, res) => {
   const userId = parseInt(req.params.userId);
@@ -184,6 +201,23 @@ app.delete('/api/reviews/:id', (req, res) => {
     res.status(200).json({ message: "Review Successfuly Deleted" });
   });
 });
+//======================
+
+// GETS GAMES AND DEVICES
+app.get('/api/games', (req, res) => {
+  res.status(200).json({ games });
+});
+
+app.get('/api/devices', (req, res) => {
+  res.status(200).json({ devices });
+});
+
+app.get('/api/games/new-releases', (req, res) => {
+  const newReleases = games.slice(-10).reverse();
+  res.status(200).json({ games: newReleases });
+});
+
+
 //======================
 
 // KEEP AT BOTTOM
