@@ -12,11 +12,12 @@ import Game from "./pages/Game"
 
 // Import components simpen sini
 import Navbar from "./components/Navbar";
+import GlobalErrorBoundary from "./components/GlobalErrorBoundary";
 
 // Bikin component yang hanya di render kalau masuk main pages ( bukan login dan register / udah masuk si aplikasinya )
 const mainPages = (props) => {
   return (
-    <>
+    <GlobalErrorBoundary>
       <style>{`
         * {
           box-sizing: border-box;
@@ -30,7 +31,7 @@ const mainPages = (props) => {
       <div>
         {props.children}
       </div>
-    </>
+    </GlobalErrorBoundary>
   );
 };
 
