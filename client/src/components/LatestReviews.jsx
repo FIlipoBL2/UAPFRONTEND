@@ -1,10 +1,11 @@
-import { For } from "solid-js";
+import { For, ErrorBoundary } from "solid-js";
 import { userStore } from "../pages/userStore";
 import ReviewCard from "./ReviewCard";
 
 function LatestReviews() {
   return (
-    <section>
+    <ErrorBoundary fallback={<p style={{ color: "#ff4d4f", padding: "20px", "background-color": "#202531", "border-radius": "10px" }}>Could not load latest reviews.</p>}>
+      <section>
       <h3 style={{ "font-size": "24px", "margin-bottom": "30px" }}>LATEST REVIEW</h3>
       <style>
         {`
@@ -37,7 +38,8 @@ function LatestReviews() {
           </For>
         </div>
       </div>
-    </section>
+      </section>
+    </ErrorBoundary>
   );
 }
 
